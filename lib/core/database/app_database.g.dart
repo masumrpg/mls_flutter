@@ -1338,12 +1338,1044 @@ class BookmarksTableCompanion extends UpdateCompanion<BookmarksTableData> {
   }
 }
 
+class $PrayerSchedulesTableTable extends PrayerSchedulesTable
+    with TableInfo<$PrayerSchedulesTableTable, PrayerSchedulesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PrayerSchedulesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cityIdMeta = const VerificationMeta('cityId');
+  @override
+  late final GeneratedColumn<String> cityId = GeneratedColumn<String>(
+    'city_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cityNameMeta = const VerificationMeta(
+    'cityName',
+  );
+  @override
+  late final GeneratedColumn<String> cityName = GeneratedColumn<String>(
+    'city_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _provinceMeta = const VerificationMeta(
+    'province',
+  );
+  @override
+  late final GeneratedColumn<String> province = GeneratedColumn<String>(
+    'province',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<String> date = GeneratedColumn<String>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _imsakMeta = const VerificationMeta('imsak');
+  @override
+  late final GeneratedColumn<String> imsak = GeneratedColumn<String>(
+    'imsak',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _subuhMeta = const VerificationMeta('subuh');
+  @override
+  late final GeneratedColumn<String> subuh = GeneratedColumn<String>(
+    'subuh',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _terbitMeta = const VerificationMeta('terbit');
+  @override
+  late final GeneratedColumn<String> terbit = GeneratedColumn<String>(
+    'terbit',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dhuhaMeta = const VerificationMeta('dhuha');
+  @override
+  late final GeneratedColumn<String> dhuha = GeneratedColumn<String>(
+    'dhuha',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dzuhurMeta = const VerificationMeta('dzuhur');
+  @override
+  late final GeneratedColumn<String> dzuhur = GeneratedColumn<String>(
+    'dzuhur',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _asharMeta = const VerificationMeta('ashar');
+  @override
+  late final GeneratedColumn<String> ashar = GeneratedColumn<String>(
+    'ashar',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _maghribMeta = const VerificationMeta(
+    'maghrib',
+  );
+  @override
+  late final GeneratedColumn<String> maghrib = GeneratedColumn<String>(
+    'maghrib',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isyaMeta = const VerificationMeta('isya');
+  @override
+  late final GeneratedColumn<String> isya = GeneratedColumn<String>(
+    'isya',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    cityId,
+    cityName,
+    province,
+    date,
+    imsak,
+    subuh,
+    terbit,
+    dhuha,
+    dzuhur,
+    ashar,
+    maghrib,
+    isya,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'prayer_schedules_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PrayerSchedulesTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('city_id')) {
+      context.handle(
+        _cityIdMeta,
+        cityId.isAcceptableOrUnknown(data['city_id']!, _cityIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cityIdMeta);
+    }
+    if (data.containsKey('city_name')) {
+      context.handle(
+        _cityNameMeta,
+        cityName.isAcceptableOrUnknown(data['city_name']!, _cityNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cityNameMeta);
+    }
+    if (data.containsKey('province')) {
+      context.handle(
+        _provinceMeta,
+        province.isAcceptableOrUnknown(data['province']!, _provinceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_provinceMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('imsak')) {
+      context.handle(
+        _imsakMeta,
+        imsak.isAcceptableOrUnknown(data['imsak']!, _imsakMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_imsakMeta);
+    }
+    if (data.containsKey('subuh')) {
+      context.handle(
+        _subuhMeta,
+        subuh.isAcceptableOrUnknown(data['subuh']!, _subuhMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_subuhMeta);
+    }
+    if (data.containsKey('terbit')) {
+      context.handle(
+        _terbitMeta,
+        terbit.isAcceptableOrUnknown(data['terbit']!, _terbitMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_terbitMeta);
+    }
+    if (data.containsKey('dhuha')) {
+      context.handle(
+        _dhuhaMeta,
+        dhuha.isAcceptableOrUnknown(data['dhuha']!, _dhuhaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dhuhaMeta);
+    }
+    if (data.containsKey('dzuhur')) {
+      context.handle(
+        _dzuhurMeta,
+        dzuhur.isAcceptableOrUnknown(data['dzuhur']!, _dzuhurMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dzuhurMeta);
+    }
+    if (data.containsKey('ashar')) {
+      context.handle(
+        _asharMeta,
+        ashar.isAcceptableOrUnknown(data['ashar']!, _asharMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_asharMeta);
+    }
+    if (data.containsKey('maghrib')) {
+      context.handle(
+        _maghribMeta,
+        maghrib.isAcceptableOrUnknown(data['maghrib']!, _maghribMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_maghribMeta);
+    }
+    if (data.containsKey('isya')) {
+      context.handle(
+        _isyaMeta,
+        isya.isAcceptableOrUnknown(data['isya']!, _isyaMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_isyaMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PrayerSchedulesTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PrayerSchedulesTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      cityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}city_id'],
+      )!,
+      cityName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}city_name'],
+      )!,
+      province: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}province'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date'],
+      )!,
+      imsak: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}imsak'],
+      )!,
+      subuh: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}subuh'],
+      )!,
+      terbit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}terbit'],
+      )!,
+      dhuha: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dhuha'],
+      )!,
+      dzuhur: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dzuhur'],
+      )!,
+      ashar: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ashar'],
+      )!,
+      maghrib: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}maghrib'],
+      )!,
+      isya: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}isya'],
+      )!,
+    );
+  }
+
+  @override
+  $PrayerSchedulesTableTable createAlias(String alias) {
+    return $PrayerSchedulesTableTable(attachedDatabase, alias);
+  }
+}
+
+class PrayerSchedulesTableData extends DataClass
+    implements Insertable<PrayerSchedulesTableData> {
+  final String id;
+  final String cityId;
+  final String cityName;
+  final String province;
+  final String date;
+  final String imsak;
+  final String subuh;
+  final String terbit;
+  final String dhuha;
+  final String dzuhur;
+  final String ashar;
+  final String maghrib;
+  final String isya;
+  const PrayerSchedulesTableData({
+    required this.id,
+    required this.cityId,
+    required this.cityName,
+    required this.province,
+    required this.date,
+    required this.imsak,
+    required this.subuh,
+    required this.terbit,
+    required this.dhuha,
+    required this.dzuhur,
+    required this.ashar,
+    required this.maghrib,
+    required this.isya,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['city_id'] = Variable<String>(cityId);
+    map['city_name'] = Variable<String>(cityName);
+    map['province'] = Variable<String>(province);
+    map['date'] = Variable<String>(date);
+    map['imsak'] = Variable<String>(imsak);
+    map['subuh'] = Variable<String>(subuh);
+    map['terbit'] = Variable<String>(terbit);
+    map['dhuha'] = Variable<String>(dhuha);
+    map['dzuhur'] = Variable<String>(dzuhur);
+    map['ashar'] = Variable<String>(ashar);
+    map['maghrib'] = Variable<String>(maghrib);
+    map['isya'] = Variable<String>(isya);
+    return map;
+  }
+
+  PrayerSchedulesTableCompanion toCompanion(bool nullToAbsent) {
+    return PrayerSchedulesTableCompanion(
+      id: Value(id),
+      cityId: Value(cityId),
+      cityName: Value(cityName),
+      province: Value(province),
+      date: Value(date),
+      imsak: Value(imsak),
+      subuh: Value(subuh),
+      terbit: Value(terbit),
+      dhuha: Value(dhuha),
+      dzuhur: Value(dzuhur),
+      ashar: Value(ashar),
+      maghrib: Value(maghrib),
+      isya: Value(isya),
+    );
+  }
+
+  factory PrayerSchedulesTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PrayerSchedulesTableData(
+      id: serializer.fromJson<String>(json['id']),
+      cityId: serializer.fromJson<String>(json['cityId']),
+      cityName: serializer.fromJson<String>(json['cityName']),
+      province: serializer.fromJson<String>(json['province']),
+      date: serializer.fromJson<String>(json['date']),
+      imsak: serializer.fromJson<String>(json['imsak']),
+      subuh: serializer.fromJson<String>(json['subuh']),
+      terbit: serializer.fromJson<String>(json['terbit']),
+      dhuha: serializer.fromJson<String>(json['dhuha']),
+      dzuhur: serializer.fromJson<String>(json['dzuhur']),
+      ashar: serializer.fromJson<String>(json['ashar']),
+      maghrib: serializer.fromJson<String>(json['maghrib']),
+      isya: serializer.fromJson<String>(json['isya']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'cityId': serializer.toJson<String>(cityId),
+      'cityName': serializer.toJson<String>(cityName),
+      'province': serializer.toJson<String>(province),
+      'date': serializer.toJson<String>(date),
+      'imsak': serializer.toJson<String>(imsak),
+      'subuh': serializer.toJson<String>(subuh),
+      'terbit': serializer.toJson<String>(terbit),
+      'dhuha': serializer.toJson<String>(dhuha),
+      'dzuhur': serializer.toJson<String>(dzuhur),
+      'ashar': serializer.toJson<String>(ashar),
+      'maghrib': serializer.toJson<String>(maghrib),
+      'isya': serializer.toJson<String>(isya),
+    };
+  }
+
+  PrayerSchedulesTableData copyWith({
+    String? id,
+    String? cityId,
+    String? cityName,
+    String? province,
+    String? date,
+    String? imsak,
+    String? subuh,
+    String? terbit,
+    String? dhuha,
+    String? dzuhur,
+    String? ashar,
+    String? maghrib,
+    String? isya,
+  }) => PrayerSchedulesTableData(
+    id: id ?? this.id,
+    cityId: cityId ?? this.cityId,
+    cityName: cityName ?? this.cityName,
+    province: province ?? this.province,
+    date: date ?? this.date,
+    imsak: imsak ?? this.imsak,
+    subuh: subuh ?? this.subuh,
+    terbit: terbit ?? this.terbit,
+    dhuha: dhuha ?? this.dhuha,
+    dzuhur: dzuhur ?? this.dzuhur,
+    ashar: ashar ?? this.ashar,
+    maghrib: maghrib ?? this.maghrib,
+    isya: isya ?? this.isya,
+  );
+  PrayerSchedulesTableData copyWithCompanion(
+    PrayerSchedulesTableCompanion data,
+  ) {
+    return PrayerSchedulesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      cityId: data.cityId.present ? data.cityId.value : this.cityId,
+      cityName: data.cityName.present ? data.cityName.value : this.cityName,
+      province: data.province.present ? data.province.value : this.province,
+      date: data.date.present ? data.date.value : this.date,
+      imsak: data.imsak.present ? data.imsak.value : this.imsak,
+      subuh: data.subuh.present ? data.subuh.value : this.subuh,
+      terbit: data.terbit.present ? data.terbit.value : this.terbit,
+      dhuha: data.dhuha.present ? data.dhuha.value : this.dhuha,
+      dzuhur: data.dzuhur.present ? data.dzuhur.value : this.dzuhur,
+      ashar: data.ashar.present ? data.ashar.value : this.ashar,
+      maghrib: data.maghrib.present ? data.maghrib.value : this.maghrib,
+      isya: data.isya.present ? data.isya.value : this.isya,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PrayerSchedulesTableData(')
+          ..write('id: $id, ')
+          ..write('cityId: $cityId, ')
+          ..write('cityName: $cityName, ')
+          ..write('province: $province, ')
+          ..write('date: $date, ')
+          ..write('imsak: $imsak, ')
+          ..write('subuh: $subuh, ')
+          ..write('terbit: $terbit, ')
+          ..write('dhuha: $dhuha, ')
+          ..write('dzuhur: $dzuhur, ')
+          ..write('ashar: $ashar, ')
+          ..write('maghrib: $maghrib, ')
+          ..write('isya: $isya')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    cityId,
+    cityName,
+    province,
+    date,
+    imsak,
+    subuh,
+    terbit,
+    dhuha,
+    dzuhur,
+    ashar,
+    maghrib,
+    isya,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PrayerSchedulesTableData &&
+          other.id == this.id &&
+          other.cityId == this.cityId &&
+          other.cityName == this.cityName &&
+          other.province == this.province &&
+          other.date == this.date &&
+          other.imsak == this.imsak &&
+          other.subuh == this.subuh &&
+          other.terbit == this.terbit &&
+          other.dhuha == this.dhuha &&
+          other.dzuhur == this.dzuhur &&
+          other.ashar == this.ashar &&
+          other.maghrib == this.maghrib &&
+          other.isya == this.isya);
+}
+
+class PrayerSchedulesTableCompanion
+    extends UpdateCompanion<PrayerSchedulesTableData> {
+  final Value<String> id;
+  final Value<String> cityId;
+  final Value<String> cityName;
+  final Value<String> province;
+  final Value<String> date;
+  final Value<String> imsak;
+  final Value<String> subuh;
+  final Value<String> terbit;
+  final Value<String> dhuha;
+  final Value<String> dzuhur;
+  final Value<String> ashar;
+  final Value<String> maghrib;
+  final Value<String> isya;
+  final Value<int> rowid;
+  const PrayerSchedulesTableCompanion({
+    this.id = const Value.absent(),
+    this.cityId = const Value.absent(),
+    this.cityName = const Value.absent(),
+    this.province = const Value.absent(),
+    this.date = const Value.absent(),
+    this.imsak = const Value.absent(),
+    this.subuh = const Value.absent(),
+    this.terbit = const Value.absent(),
+    this.dhuha = const Value.absent(),
+    this.dzuhur = const Value.absent(),
+    this.ashar = const Value.absent(),
+    this.maghrib = const Value.absent(),
+    this.isya = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PrayerSchedulesTableCompanion.insert({
+    required String id,
+    required String cityId,
+    required String cityName,
+    required String province,
+    required String date,
+    required String imsak,
+    required String subuh,
+    required String terbit,
+    required String dhuha,
+    required String dzuhur,
+    required String ashar,
+    required String maghrib,
+    required String isya,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       cityId = Value(cityId),
+       cityName = Value(cityName),
+       province = Value(province),
+       date = Value(date),
+       imsak = Value(imsak),
+       subuh = Value(subuh),
+       terbit = Value(terbit),
+       dhuha = Value(dhuha),
+       dzuhur = Value(dzuhur),
+       ashar = Value(ashar),
+       maghrib = Value(maghrib),
+       isya = Value(isya);
+  static Insertable<PrayerSchedulesTableData> custom({
+    Expression<String>? id,
+    Expression<String>? cityId,
+    Expression<String>? cityName,
+    Expression<String>? province,
+    Expression<String>? date,
+    Expression<String>? imsak,
+    Expression<String>? subuh,
+    Expression<String>? terbit,
+    Expression<String>? dhuha,
+    Expression<String>? dzuhur,
+    Expression<String>? ashar,
+    Expression<String>? maghrib,
+    Expression<String>? isya,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (cityId != null) 'city_id': cityId,
+      if (cityName != null) 'city_name': cityName,
+      if (province != null) 'province': province,
+      if (date != null) 'date': date,
+      if (imsak != null) 'imsak': imsak,
+      if (subuh != null) 'subuh': subuh,
+      if (terbit != null) 'terbit': terbit,
+      if (dhuha != null) 'dhuha': dhuha,
+      if (dzuhur != null) 'dzuhur': dzuhur,
+      if (ashar != null) 'ashar': ashar,
+      if (maghrib != null) 'maghrib': maghrib,
+      if (isya != null) 'isya': isya,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PrayerSchedulesTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? cityId,
+    Value<String>? cityName,
+    Value<String>? province,
+    Value<String>? date,
+    Value<String>? imsak,
+    Value<String>? subuh,
+    Value<String>? terbit,
+    Value<String>? dhuha,
+    Value<String>? dzuhur,
+    Value<String>? ashar,
+    Value<String>? maghrib,
+    Value<String>? isya,
+    Value<int>? rowid,
+  }) {
+    return PrayerSchedulesTableCompanion(
+      id: id ?? this.id,
+      cityId: cityId ?? this.cityId,
+      cityName: cityName ?? this.cityName,
+      province: province ?? this.province,
+      date: date ?? this.date,
+      imsak: imsak ?? this.imsak,
+      subuh: subuh ?? this.subuh,
+      terbit: terbit ?? this.terbit,
+      dhuha: dhuha ?? this.dhuha,
+      dzuhur: dzuhur ?? this.dzuhur,
+      ashar: ashar ?? this.ashar,
+      maghrib: maghrib ?? this.maghrib,
+      isya: isya ?? this.isya,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (cityId.present) {
+      map['city_id'] = Variable<String>(cityId.value);
+    }
+    if (cityName.present) {
+      map['city_name'] = Variable<String>(cityName.value);
+    }
+    if (province.present) {
+      map['province'] = Variable<String>(province.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<String>(date.value);
+    }
+    if (imsak.present) {
+      map['imsak'] = Variable<String>(imsak.value);
+    }
+    if (subuh.present) {
+      map['subuh'] = Variable<String>(subuh.value);
+    }
+    if (terbit.present) {
+      map['terbit'] = Variable<String>(terbit.value);
+    }
+    if (dhuha.present) {
+      map['dhuha'] = Variable<String>(dhuha.value);
+    }
+    if (dzuhur.present) {
+      map['dzuhur'] = Variable<String>(dzuhur.value);
+    }
+    if (ashar.present) {
+      map['ashar'] = Variable<String>(ashar.value);
+    }
+    if (maghrib.present) {
+      map['maghrib'] = Variable<String>(maghrib.value);
+    }
+    if (isya.present) {
+      map['isya'] = Variable<String>(isya.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PrayerSchedulesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('cityId: $cityId, ')
+          ..write('cityName: $cityName, ')
+          ..write('province: $province, ')
+          ..write('date: $date, ')
+          ..write('imsak: $imsak, ')
+          ..write('subuh: $subuh, ')
+          ..write('terbit: $terbit, ')
+          ..write('dhuha: $dhuha, ')
+          ..write('dzuhur: $dzuhur, ')
+          ..write('ashar: $ashar, ')
+          ..write('maghrib: $maghrib, ')
+          ..write('isya: $isya, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationSettingsTableTable extends NotificationSettingsTable
+    with
+        TableInfo<
+          $NotificationSettingsTableTable,
+          NotificationSettingsTableData
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationSettingsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _prayerNameMeta = const VerificationMeta(
+    'prayerName',
+  );
+  @override
+  late final GeneratedColumn<String> prayerName = GeneratedColumn<String>(
+    'prayer_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _alertTypeMeta = const VerificationMeta(
+    'alertType',
+  );
+  @override
+  late final GeneratedColumn<int> alertType = GeneratedColumn<int>(
+    'alert_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _preReminderMinutesMeta =
+      const VerificationMeta('preReminderMinutes');
+  @override
+  late final GeneratedColumn<int> preReminderMinutes = GeneratedColumn<int>(
+    'pre_reminder_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    prayerName,
+    alertType,
+    preReminderMinutes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'notification_settings_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NotificationSettingsTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('prayer_name')) {
+      context.handle(
+        _prayerNameMeta,
+        prayerName.isAcceptableOrUnknown(data['prayer_name']!, _prayerNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_prayerNameMeta);
+    }
+    if (data.containsKey('alert_type')) {
+      context.handle(
+        _alertTypeMeta,
+        alertType.isAcceptableOrUnknown(data['alert_type']!, _alertTypeMeta),
+      );
+    }
+    if (data.containsKey('pre_reminder_minutes')) {
+      context.handle(
+        _preReminderMinutesMeta,
+        preReminderMinutes.isAcceptableOrUnknown(
+          data['pre_reminder_minutes']!,
+          _preReminderMinutesMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {prayerName};
+  @override
+  NotificationSettingsTableData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NotificationSettingsTableData(
+      prayerName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}prayer_name'],
+      )!,
+      alertType: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}alert_type'],
+      )!,
+      preReminderMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pre_reminder_minutes'],
+      )!,
+    );
+  }
+
+  @override
+  $NotificationSettingsTableTable createAlias(String alias) {
+    return $NotificationSettingsTableTable(attachedDatabase, alias);
+  }
+}
+
+class NotificationSettingsTableData extends DataClass
+    implements Insertable<NotificationSettingsTableData> {
+  final String prayerName;
+  final int alertType;
+  final int preReminderMinutes;
+  const NotificationSettingsTableData({
+    required this.prayerName,
+    required this.alertType,
+    required this.preReminderMinutes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['prayer_name'] = Variable<String>(prayerName);
+    map['alert_type'] = Variable<int>(alertType);
+    map['pre_reminder_minutes'] = Variable<int>(preReminderMinutes);
+    return map;
+  }
+
+  NotificationSettingsTableCompanion toCompanion(bool nullToAbsent) {
+    return NotificationSettingsTableCompanion(
+      prayerName: Value(prayerName),
+      alertType: Value(alertType),
+      preReminderMinutes: Value(preReminderMinutes),
+    );
+  }
+
+  factory NotificationSettingsTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NotificationSettingsTableData(
+      prayerName: serializer.fromJson<String>(json['prayerName']),
+      alertType: serializer.fromJson<int>(json['alertType']),
+      preReminderMinutes: serializer.fromJson<int>(json['preReminderMinutes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'prayerName': serializer.toJson<String>(prayerName),
+      'alertType': serializer.toJson<int>(alertType),
+      'preReminderMinutes': serializer.toJson<int>(preReminderMinutes),
+    };
+  }
+
+  NotificationSettingsTableData copyWith({
+    String? prayerName,
+    int? alertType,
+    int? preReminderMinutes,
+  }) => NotificationSettingsTableData(
+    prayerName: prayerName ?? this.prayerName,
+    alertType: alertType ?? this.alertType,
+    preReminderMinutes: preReminderMinutes ?? this.preReminderMinutes,
+  );
+  NotificationSettingsTableData copyWithCompanion(
+    NotificationSettingsTableCompanion data,
+  ) {
+    return NotificationSettingsTableData(
+      prayerName: data.prayerName.present
+          ? data.prayerName.value
+          : this.prayerName,
+      alertType: data.alertType.present ? data.alertType.value : this.alertType,
+      preReminderMinutes: data.preReminderMinutes.present
+          ? data.preReminderMinutes.value
+          : this.preReminderMinutes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationSettingsTableData(')
+          ..write('prayerName: $prayerName, ')
+          ..write('alertType: $alertType, ')
+          ..write('preReminderMinutes: $preReminderMinutes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(prayerName, alertType, preReminderMinutes);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NotificationSettingsTableData &&
+          other.prayerName == this.prayerName &&
+          other.alertType == this.alertType &&
+          other.preReminderMinutes == this.preReminderMinutes);
+}
+
+class NotificationSettingsTableCompanion
+    extends UpdateCompanion<NotificationSettingsTableData> {
+  final Value<String> prayerName;
+  final Value<int> alertType;
+  final Value<int> preReminderMinutes;
+  final Value<int> rowid;
+  const NotificationSettingsTableCompanion({
+    this.prayerName = const Value.absent(),
+    this.alertType = const Value.absent(),
+    this.preReminderMinutes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationSettingsTableCompanion.insert({
+    required String prayerName,
+    this.alertType = const Value.absent(),
+    this.preReminderMinutes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : prayerName = Value(prayerName);
+  static Insertable<NotificationSettingsTableData> custom({
+    Expression<String>? prayerName,
+    Expression<int>? alertType,
+    Expression<int>? preReminderMinutes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (prayerName != null) 'prayer_name': prayerName,
+      if (alertType != null) 'alert_type': alertType,
+      if (preReminderMinutes != null)
+        'pre_reminder_minutes': preReminderMinutes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationSettingsTableCompanion copyWith({
+    Value<String>? prayerName,
+    Value<int>? alertType,
+    Value<int>? preReminderMinutes,
+    Value<int>? rowid,
+  }) {
+    return NotificationSettingsTableCompanion(
+      prayerName: prayerName ?? this.prayerName,
+      alertType: alertType ?? this.alertType,
+      preReminderMinutes: preReminderMinutes ?? this.preReminderMinutes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (prayerName.present) {
+      map['prayer_name'] = Variable<String>(prayerName.value);
+    }
+    if (alertType.present) {
+      map['alert_type'] = Variable<int>(alertType.value);
+    }
+    if (preReminderMinutes.present) {
+      map['pre_reminder_minutes'] = Variable<int>(preReminderMinutes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationSettingsTableCompanion(')
+          ..write('prayerName: $prayerName, ')
+          ..write('alertType: $alertType, ')
+          ..write('preReminderMinutes: $preReminderMinutes, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $SurahsTableTable surahsTable = $SurahsTableTable(this);
   late final $AyahsTableTable ayahsTable = $AyahsTableTable(this);
   late final $BookmarksTableTable bookmarksTable = $BookmarksTableTable(this);
+  late final $PrayerSchedulesTableTable prayerSchedulesTable =
+      $PrayerSchedulesTableTable(this);
+  late final $NotificationSettingsTableTable notificationSettingsTable =
+      $NotificationSettingsTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1352,6 +2384,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     surahsTable,
     ayahsTable,
     bookmarksTable,
+    prayerSchedulesTable,
+    notificationSettingsTable,
   ];
 }
 
@@ -2056,6 +3090,559 @@ typedef $$BookmarksTableTableProcessedTableManager =
       BookmarksTableData,
       PrefetchHooks Function()
     >;
+typedef $$PrayerSchedulesTableTableCreateCompanionBuilder =
+    PrayerSchedulesTableCompanion Function({
+      required String id,
+      required String cityId,
+      required String cityName,
+      required String province,
+      required String date,
+      required String imsak,
+      required String subuh,
+      required String terbit,
+      required String dhuha,
+      required String dzuhur,
+      required String ashar,
+      required String maghrib,
+      required String isya,
+      Value<int> rowid,
+    });
+typedef $$PrayerSchedulesTableTableUpdateCompanionBuilder =
+    PrayerSchedulesTableCompanion Function({
+      Value<String> id,
+      Value<String> cityId,
+      Value<String> cityName,
+      Value<String> province,
+      Value<String> date,
+      Value<String> imsak,
+      Value<String> subuh,
+      Value<String> terbit,
+      Value<String> dhuha,
+      Value<String> dzuhur,
+      Value<String> ashar,
+      Value<String> maghrib,
+      Value<String> isya,
+      Value<int> rowid,
+    });
+
+class $$PrayerSchedulesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $PrayerSchedulesTableTable> {
+  $$PrayerSchedulesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cityId => $composableBuilder(
+    column: $table.cityId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cityName => $composableBuilder(
+    column: $table.cityName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imsak => $composableBuilder(
+    column: $table.imsak,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get subuh => $composableBuilder(
+    column: $table.subuh,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get terbit => $composableBuilder(
+    column: $table.terbit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dhuha => $composableBuilder(
+    column: $table.dhuha,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dzuhur => $composableBuilder(
+    column: $table.dzuhur,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ashar => $composableBuilder(
+    column: $table.ashar,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get maghrib => $composableBuilder(
+    column: $table.maghrib,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get isya => $composableBuilder(
+    column: $table.isya,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PrayerSchedulesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $PrayerSchedulesTableTable> {
+  $$PrayerSchedulesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cityId => $composableBuilder(
+    column: $table.cityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cityName => $composableBuilder(
+    column: $table.cityName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get imsak => $composableBuilder(
+    column: $table.imsak,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get subuh => $composableBuilder(
+    column: $table.subuh,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get terbit => $composableBuilder(
+    column: $table.terbit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dhuha => $composableBuilder(
+    column: $table.dhuha,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dzuhur => $composableBuilder(
+    column: $table.dzuhur,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ashar => $composableBuilder(
+    column: $table.ashar,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get maghrib => $composableBuilder(
+    column: $table.maghrib,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get isya => $composableBuilder(
+    column: $table.isya,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PrayerSchedulesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PrayerSchedulesTableTable> {
+  $$PrayerSchedulesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get cityId =>
+      $composableBuilder(column: $table.cityId, builder: (column) => column);
+
+  GeneratedColumn<String> get cityName =>
+      $composableBuilder(column: $table.cityName, builder: (column) => column);
+
+  GeneratedColumn<String> get province =>
+      $composableBuilder(column: $table.province, builder: (column) => column);
+
+  GeneratedColumn<String> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get imsak =>
+      $composableBuilder(column: $table.imsak, builder: (column) => column);
+
+  GeneratedColumn<String> get subuh =>
+      $composableBuilder(column: $table.subuh, builder: (column) => column);
+
+  GeneratedColumn<String> get terbit =>
+      $composableBuilder(column: $table.terbit, builder: (column) => column);
+
+  GeneratedColumn<String> get dhuha =>
+      $composableBuilder(column: $table.dhuha, builder: (column) => column);
+
+  GeneratedColumn<String> get dzuhur =>
+      $composableBuilder(column: $table.dzuhur, builder: (column) => column);
+
+  GeneratedColumn<String> get ashar =>
+      $composableBuilder(column: $table.ashar, builder: (column) => column);
+
+  GeneratedColumn<String> get maghrib =>
+      $composableBuilder(column: $table.maghrib, builder: (column) => column);
+
+  GeneratedColumn<String> get isya =>
+      $composableBuilder(column: $table.isya, builder: (column) => column);
+}
+
+class $$PrayerSchedulesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PrayerSchedulesTableTable,
+          PrayerSchedulesTableData,
+          $$PrayerSchedulesTableTableFilterComposer,
+          $$PrayerSchedulesTableTableOrderingComposer,
+          $$PrayerSchedulesTableTableAnnotationComposer,
+          $$PrayerSchedulesTableTableCreateCompanionBuilder,
+          $$PrayerSchedulesTableTableUpdateCompanionBuilder,
+          (
+            PrayerSchedulesTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $PrayerSchedulesTableTable,
+              PrayerSchedulesTableData
+            >,
+          ),
+          PrayerSchedulesTableData,
+          PrefetchHooks Function()
+        > {
+  $$PrayerSchedulesTableTableTableManager(
+    _$AppDatabase db,
+    $PrayerSchedulesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PrayerSchedulesTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PrayerSchedulesTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$PrayerSchedulesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> cityId = const Value.absent(),
+                Value<String> cityName = const Value.absent(),
+                Value<String> province = const Value.absent(),
+                Value<String> date = const Value.absent(),
+                Value<String> imsak = const Value.absent(),
+                Value<String> subuh = const Value.absent(),
+                Value<String> terbit = const Value.absent(),
+                Value<String> dhuha = const Value.absent(),
+                Value<String> dzuhur = const Value.absent(),
+                Value<String> ashar = const Value.absent(),
+                Value<String> maghrib = const Value.absent(),
+                Value<String> isya = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PrayerSchedulesTableCompanion(
+                id: id,
+                cityId: cityId,
+                cityName: cityName,
+                province: province,
+                date: date,
+                imsak: imsak,
+                subuh: subuh,
+                terbit: terbit,
+                dhuha: dhuha,
+                dzuhur: dzuhur,
+                ashar: ashar,
+                maghrib: maghrib,
+                isya: isya,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String cityId,
+                required String cityName,
+                required String province,
+                required String date,
+                required String imsak,
+                required String subuh,
+                required String terbit,
+                required String dhuha,
+                required String dzuhur,
+                required String ashar,
+                required String maghrib,
+                required String isya,
+                Value<int> rowid = const Value.absent(),
+              }) => PrayerSchedulesTableCompanion.insert(
+                id: id,
+                cityId: cityId,
+                cityName: cityName,
+                province: province,
+                date: date,
+                imsak: imsak,
+                subuh: subuh,
+                terbit: terbit,
+                dhuha: dhuha,
+                dzuhur: dzuhur,
+                ashar: ashar,
+                maghrib: maghrib,
+                isya: isya,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PrayerSchedulesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PrayerSchedulesTableTable,
+      PrayerSchedulesTableData,
+      $$PrayerSchedulesTableTableFilterComposer,
+      $$PrayerSchedulesTableTableOrderingComposer,
+      $$PrayerSchedulesTableTableAnnotationComposer,
+      $$PrayerSchedulesTableTableCreateCompanionBuilder,
+      $$PrayerSchedulesTableTableUpdateCompanionBuilder,
+      (
+        PrayerSchedulesTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $PrayerSchedulesTableTable,
+          PrayerSchedulesTableData
+        >,
+      ),
+      PrayerSchedulesTableData,
+      PrefetchHooks Function()
+    >;
+typedef $$NotificationSettingsTableTableCreateCompanionBuilder =
+    NotificationSettingsTableCompanion Function({
+      required String prayerName,
+      Value<int> alertType,
+      Value<int> preReminderMinutes,
+      Value<int> rowid,
+    });
+typedef $$NotificationSettingsTableTableUpdateCompanionBuilder =
+    NotificationSettingsTableCompanion Function({
+      Value<String> prayerName,
+      Value<int> alertType,
+      Value<int> preReminderMinutes,
+      Value<int> rowid,
+    });
+
+class $$NotificationSettingsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTableTable> {
+  $$NotificationSettingsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get prayerName => $composableBuilder(
+    column: $table.prayerName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get alertType => $composableBuilder(
+    column: $table.alertType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get preReminderMinutes => $composableBuilder(
+    column: $table.preReminderMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationSettingsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTableTable> {
+  $$NotificationSettingsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get prayerName => $composableBuilder(
+    column: $table.prayerName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get alertType => $composableBuilder(
+    column: $table.alertType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get preReminderMinutes => $composableBuilder(
+    column: $table.preReminderMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationSettingsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTableTable> {
+  $$NotificationSettingsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get prayerName => $composableBuilder(
+    column: $table.prayerName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get alertType =>
+      $composableBuilder(column: $table.alertType, builder: (column) => column);
+
+  GeneratedColumn<int> get preReminderMinutes => $composableBuilder(
+    column: $table.preReminderMinutes,
+    builder: (column) => column,
+  );
+}
+
+class $$NotificationSettingsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationSettingsTableTable,
+          NotificationSettingsTableData,
+          $$NotificationSettingsTableTableFilterComposer,
+          $$NotificationSettingsTableTableOrderingComposer,
+          $$NotificationSettingsTableTableAnnotationComposer,
+          $$NotificationSettingsTableTableCreateCompanionBuilder,
+          $$NotificationSettingsTableTableUpdateCompanionBuilder,
+          (
+            NotificationSettingsTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationSettingsTableTable,
+              NotificationSettingsTableData
+            >,
+          ),
+          NotificationSettingsTableData,
+          PrefetchHooks Function()
+        > {
+  $$NotificationSettingsTableTableTableManager(
+    _$AppDatabase db,
+    $NotificationSettingsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationSettingsTableTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$NotificationSettingsTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationSettingsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> prayerName = const Value.absent(),
+                Value<int> alertType = const Value.absent(),
+                Value<int> preReminderMinutes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationSettingsTableCompanion(
+                prayerName: prayerName,
+                alertType: alertType,
+                preReminderMinutes: preReminderMinutes,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String prayerName,
+                Value<int> alertType = const Value.absent(),
+                Value<int> preReminderMinutes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationSettingsTableCompanion.insert(
+                prayerName: prayerName,
+                alertType: alertType,
+                preReminderMinutes: preReminderMinutes,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationSettingsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationSettingsTableTable,
+      NotificationSettingsTableData,
+      $$NotificationSettingsTableTableFilterComposer,
+      $$NotificationSettingsTableTableOrderingComposer,
+      $$NotificationSettingsTableTableAnnotationComposer,
+      $$NotificationSettingsTableTableCreateCompanionBuilder,
+      $$NotificationSettingsTableTableUpdateCompanionBuilder,
+      (
+        NotificationSettingsTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationSettingsTableTable,
+          NotificationSettingsTableData
+        >,
+      ),
+      NotificationSettingsTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2066,4 +3653,11 @@ class $AppDatabaseManager {
       $$AyahsTableTableTableManager(_db, _db.ayahsTable);
   $$BookmarksTableTableTableManager get bookmarksTable =>
       $$BookmarksTableTableTableManager(_db, _db.bookmarksTable);
+  $$PrayerSchedulesTableTableTableManager get prayerSchedulesTable =>
+      $$PrayerSchedulesTableTableTableManager(_db, _db.prayerSchedulesTable);
+  $$NotificationSettingsTableTableTableManager get notificationSettingsTable =>
+      $$NotificationSettingsTableTableTableManager(
+        _db,
+        _db.notificationSettingsTable,
+      );
 }

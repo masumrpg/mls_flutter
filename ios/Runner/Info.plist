@@ -47,5 +47,9 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Aplikasi ini membutuhkan akses lokasi untuk menampilkan jadwal sholat yang akurat sesuai dengan kota Anda.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Aplikasi ini membutuhkan akses lokasi untuk menampilkan jadwal sholat yang akurat bahkan saat di latar belakang.</string>
 	</dict>
 </plist>

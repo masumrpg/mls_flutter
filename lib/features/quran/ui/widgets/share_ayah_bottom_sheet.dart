@@ -74,9 +74,11 @@ class _ShareAyahBottomSheetState extends State<ShareAyahBottomSheet> {
 
     if (imagePath != null) {
       try {
-        await Share.shareXFiles(
-          [XFile(imagePath)],
-          text: 'Q.S ${widget.surahName} Ayat ${widget.ayah.ayahNumber}',
+        await SharePlus.instance.share(
+          ShareParams(
+            text: 'Q.S ${widget.surahName} Ayat ${widget.ayah.ayahNumber}',
+            files: [XFile(imagePath)],
+          ),
         );
       } catch (e) {
         if (mounted) {

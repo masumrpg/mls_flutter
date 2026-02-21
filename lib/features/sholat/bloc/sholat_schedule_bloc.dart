@@ -20,10 +20,10 @@ class SholatScheduleBloc extends Bloc<SholatScheduleEvent, SholatScheduleState> 
   ) async {
     emit(SholatScheduleLoading());
 
-    // Default to Jakarta (58a2fc6ed39fd083f55d4182bf88826d) if no city is provided
-    final cityId = event.cityId ?? '58a2fc6ed39fd083f55d4182bf88826d';
-
-    final result = await repository.getScheduleToday(cityId);
+    // Use current location explicitly if cityId is null
+    final result = event.cityId == null
+        ? await repository.getScheduleForCurrentLocation()
+        : await repository.getScheduleToday(event.cityId!);
 
     result.fold(
       (failure) => emit(SholatScheduleError(failure.message)),

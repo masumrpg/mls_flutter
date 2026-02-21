@@ -5,9 +5,11 @@ import '../network/api_client.dart';
 import '../database/app_database.dart';
 
 import '../../features/sholat/data/datasources/sholat_remote_datasource.dart';
+import '../../features/sholat/data/datasources/sholat_local_datasource.dart';
 import '../../features/sholat/data/repositories/sholat_repository_impl.dart';
 import '../../features/sholat/domain/repositories/sholat_repository.dart';
 import '../../features/sholat/bloc/sholat_schedule_bloc.dart';
+import '../services/location_service.dart';
 
 import '../../features/quran/data/datasources/quran_remote_datasource.dart';
 import '../../features/quran/data/datasources/quran_local_datasource.dart';
@@ -44,13 +46,24 @@ Future<void> setupServiceLocator() async {
   // Database
   sl.registerLazySingleton<AppDatabase>(() => AppDatabase.instance);
 
+  // ─── Core Services ───────────────────────────────────────────────
+  sl.registerLazySingleton<LocationService>(() => LocationService());
+
   // ─── Sholat Feature ──────────────────────────────────────────────
   sl.registerLazySingleton<SholatRemoteDataSource>(
     () => SholatRemoteDataSourceImpl(sl()),
   );
 
+  sl.registerLazySingleton<SholatLocalDataSource>(
+    () => SholatLocalDataSourceImpl(sl()),
+  );
+
   sl.registerLazySingleton<SholatRepository>(
-    () => SholatRepositoryImpl(sl()),
+    () => SholatRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      locationService: sl(),
+    ),
   );
 
   sl.registerFactory<SholatScheduleBloc>(

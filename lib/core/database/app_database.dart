@@ -1,17 +1,26 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import '../../features/quran/data/datasources/quran_tables.dart';
+import '../../features/sholat/data/datasources/sholat_tables.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [SurahsTable, AyahsTable, BookmarksTable])
+@DriftDatabase(
+  tables: [
+    SurahsTable,
+    AyahsTable,
+    BookmarksTable,
+    PrayerSchedulesTable,
+    NotificationSettingsTable,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase._() : super(_openConnection());
 
   static final AppDatabase instance = AppDatabase._();
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -25,6 +34,10 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.createTable(bookmarksTable);
+      }
+      if (from < 4) {
+        await m.createTable(prayerSchedulesTable);
+        await m.createTable(notificationSettingsTable);
       }
     },
   );
