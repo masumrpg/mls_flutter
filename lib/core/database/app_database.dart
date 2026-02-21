@@ -1,12 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
-// Import tables here
-import '../../features/notes/data/datasources/notes_local_datasource.dart';
-
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [NotesItems])
+@DriftDatabase(tables: [])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._() : super(_openConnection());
 

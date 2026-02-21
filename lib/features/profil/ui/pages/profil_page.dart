@@ -6,16 +6,20 @@ import '../../bloc/profil_event.dart';
 import '../../bloc/profil_state.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/theme_cubit.dart';
 
 class ProfilPage extends StatelessWidget {
   const ProfilPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bgColor = theme.scaffoldBackgroundColor;
+
     return BlocProvider(
       create: (context) => sl<ProfilBloc>()..add(const FetchProfilStats()),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: bgColor,
         appBar: AppBar(
           title: Text(
             'Statistik Aplikasi',
@@ -26,6 +30,31 @@ class ProfilPage extends StatelessWidget {
           ),
           backgroundColor: AppColors.primary,
           elevation: 0,
+          actions: [
+            // Dark/Light mode toggle
+            BlocBuilder<ThemeCubit, ThemeMode>(
+              builder: (context, themeMode) {
+                return IconButton(
+                  icon: Icon(
+                    themeMode == ThemeMode.dark
+                        ? Icons.light_mode
+                        : themeMode == ThemeMode.light
+                        ? Icons.dark_mode
+                        : Icons.brightness_auto,
+                    color: AppColors.white,
+                  ),
+                  tooltip: themeMode == ThemeMode.dark
+                      ? 'Switch to Light Mode'
+                      : themeMode == ThemeMode.light
+                      ? 'Switch to Dark Mode'
+                      : 'Toggle Theme',
+                  onPressed: () {
+                    context.read<ThemeCubit>().toggleTheme();
+                  },
+                );
+              },
+            ),
+          ],
         ),
         body: SafeArea(
           child: BlocBuilder<ProfilBloc, ProfilState>(
