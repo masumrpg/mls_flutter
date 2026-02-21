@@ -19,7 +19,7 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(
-          create: (_) => BookmarkCubit(db: sl<AppDatabase>())..loadLastRead(),
+          create: (_) => BookmarkCubit(db: sl<AppDatabase>())..loadBookmarks(),
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(

@@ -8,8 +8,21 @@ import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_error_widget.dart';
 
-class QuranPage extends StatelessWidget {
+class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
+
+  @override
+  State<QuranPage> createState() => _QuranPageState();
+}
+
+class _QuranPageState extends State<QuranPage> {
+  int _activeTabIndex = 0; // 0 for Surah, 1 for Bookmark
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<BookmarkCubit>().loadBookmarks();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,18 +108,15 @@ class QuranPage extends StatelessWidget {
                       ),
                     ),
                     SliverToBoxAdapter(child: _buildTabBar(subTextColor)),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final surah = state.surahs[index];
-                        return _buildSurahTile(
-                          context,
-                          surah,
-                          textColor,
-                          subTextColor,
-                          cardBg,
-                        );
-                      }, childCount: state.surahs.length),
-                    ),
+                    if (_activeTabIndex == 0)
+                      _buildSurahList(
+                        state.surahs,
+                        textColor,
+                        subTextColor,
+                        cardBg,
+                      )
+                    else
+                      _buildBookmarkList(textColor, subTextColor, cardBg),
                   ],
                 ),
               );
@@ -254,35 +264,185 @@ class QuranPage extends StatelessWidget {
       padding: const EdgeInsets.only(top: 24, bottom: 8),
       child: Row(
         children: [
-          _buildTab('Surah', subTextColor, selected: true),
-          _buildTab('Juz', subTextColor),
-          _buildTab('Bookmark', subTextColor),
+          _buildTab('Surah', subTextColor, 0),
+          _buildTab('Bookmark', subTextColor, 1),
         ],
       ),
     );
   }
 
-  Widget _buildTab(String label, Color subTextColor, {bool selected = false}) {
+  Widget _buildTab(String label, Color subTextColor, int index) {
+    final bool selected = _activeTabIndex == index;
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: selected ? AppColors.secondary : Colors.transparent,
-              width: 2,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _activeTabIndex = index;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.transparent, // to catch taps on empty space
+            border: Border(
+              bottom: BorderSide(
+                color: selected ? AppColors.secondary : Colors.transparent,
+                width: 2,
+              ),
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: AppTypography.textTheme.titleSmall?.copyWith(
+              color: selected ? AppColors.secondary : subTextColor,
+              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: AppTypography.textTheme.titleSmall?.copyWith(
-            color: selected ? AppColors.secondary : subTextColor,
-            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
       ),
+    );
+  }
+
+  Widget _buildSurahList(
+    List<dynamic> surahs,
+    Color textColor,
+    Color subTextColor,
+    Color cardBg,
+  ) {
+    return SliverPadding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).padding.bottom + 80,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return _buildSurahTile(
+            context,
+            surahs[index],
+            textColor,
+            subTextColor,
+            cardBg,
+          );
+        }, childCount: surahs.length),
+      ),
+    );
+  }
+
+  Widget _buildBookmarkList(Color textColor, Color subTextColor, Color cardBg) {
+    return BlocBuilder<BookmarkCubit, BookmarkState>(
+      builder: (context, state) {
+        if (state.bookmarks.isEmpty) {
+          return SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.bookmark_border,
+                      size: 64,
+                      color: AppColors.grey,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Belum Ada Bookmark',
+                      style: AppTypography.textTheme.titleMedium?.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tandai ayat favorit atau terakhir dibaca, dan mereka akan muncul di sini.',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.textTheme.bodyMedium?.copyWith(
+                        color: subTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        return SliverPadding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom + 80,
+          ),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final bookmark = state.bookmarks[index];
+              return InkWell(
+                onTap: () {
+                  context.push(
+                    '/quran/detail/${bookmark.surahNumber}?ayah=${bookmark.ayahNumber}',
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: subTextColor.withValues(alpha: 0.15),
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondary.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.bookmark,
+                            color: AppColors.secondary,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              bookmark.surahName ??
+                                  'Surah ${bookmark.surahNumber}',
+                              style: AppTypography.textTheme.titleMedium
+                                  ?.copyWith(
+                                    color: textColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Ayat ${bookmark.ayahNumber} • Disimpan ${bookmark.createdAt.day}/${bookmark.createdAt.month}/${bookmark.createdAt.year}',
+                              style: AppTypography.textTheme.bodySmall
+                                  ?.copyWith(color: subTextColor),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right, color: AppColors.grey),
+                    ],
+                  ),
+                ),
+              );
+            }, childCount: state.bookmarks.length),
+          ),
+        );
+      },
     );
   }
 

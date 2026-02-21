@@ -9,6 +9,7 @@ import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../../../core/widgets/custom_error_widget.dart';
+import '../widgets/share_ayah_bottom_sheet.dart';
 import '../../domain/entities/surah_detail_entity.dart';
 
 class QuranSurahDetailPage extends StatefulWidget {
@@ -667,7 +668,13 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
                           : subTextColor,
                       size: 20,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      ShareAyahBottomSheet.show(
+                        context,
+                        ayah: ayah,
+                        surahName: surahName,
+                      );
+                    },
                     constraints: const BoxConstraints(),
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
