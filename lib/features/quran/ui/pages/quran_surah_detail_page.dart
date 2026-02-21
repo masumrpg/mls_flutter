@@ -8,13 +8,39 @@ import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/surah_detail_entity.dart';
 
-class QuranSurahDetailPage extends StatelessWidget {
+class QuranSurahDetailPage extends StatefulWidget {
   final int surahNumber;
 
   const QuranSurahDetailPage({
     super.key,
     required this.surahNumber,
   });
+
+  @override
+  State<QuranSurahDetailPage> createState() => _QuranSurahDetailPageState();
+}
+
+class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _ayahKeys = {};
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToAyah(int ayahNumber) {
+    final key = _ayahKeys[ayahNumber];
+    if (key?.currentContext != null) {
+      Scrollable.ensureVisible(
+        key!.currentContext!,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.3,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +55,7 @@ class QuranSurahDetailPage extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) =>
-              sl<SurahDetailBloc>()..add(FetchSurahDetail(surahNumber)),
+              sl<SurahDetailBloc>()..add(FetchSurahDetail(widget.surahNumber)),
         ),
         BlocProvider(create: (context) => AudioPlayerCubit()),
       ],
@@ -55,7 +81,7 @@ class QuranSurahDetailPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Juz 1 • Page 1',
+                      '${state.surahDetail.revelation} • ${state.surahDetail.numberOfAyahs} Ayat',
                       style: AppTypography.textTheme.bodySmall?.copyWith(
                         color: subTextColor,
                       ),
@@ -64,7 +90,7 @@ class QuranSurahDetailPage extends StatelessWidget {
                 );
               }
               return Text(
-                'Surah $surahNumber',
+                'Surah ${widget.surahNumber}',
                 style: AppTypography.textTheme.titleLarge?.copyWith(
                   color: textColor,
                   fontWeight: FontWeight.bold,
@@ -112,11 +138,9 @@ class QuranSurahDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(
-                        onPressed: () {
-                          context.read<SurahDetailBloc>().add(
-                            FetchSurahDetail(surahNumber),
-                          );
-                        },
+                        onPressed: () => context.read<SurahDetailBloc>().add(
+                          FetchSurahDetail(widget.surahNumber),
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                         ),
@@ -131,25 +155,47 @@ class QuranSurahDetailPage extends StatelessWidget {
               );
             } else if (state is SurahDetailLoaded) {
               final surah = state.surahDetail;
+
+              // Pre-create keys for all ayahs
+              for (final ayah in surah.ayahs) {
+                _ayahKeys.putIfAbsent(ayah.ayahNumber, () => GlobalKey());
+              }
+
               return Stack(
                 children: [
                   // Ayah list (full height)
-                  ListView.builder(
-                    padding: const EdgeInsets.all(16.0),
-                    itemCount: surah.ayahs.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return _buildSurahHeader(context, surah);
-                      }
-                      final ayah = surah.ayahs[index - 1];
-                      return _buildAyahCard(
-                        context,
-                        ayah,
-                        textColor,
-                        subTextColor,
-                        cardBg,
-                      );
+                  BlocListener<AudioPlayerCubit, AudioPlayerState>(
+                    listenWhen: (prev, curr) =>
+                        prev.activeAyahNumber != curr.activeAyahNumber &&
+                        curr.isFullSurahMode &&
+                        curr.activeAyahNumber != null,
+                    listener: (context, audioState) {
+                      _scrollToAyah(audioState.activeAyahNumber!);
                     },
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 80,
+                      ),
+                      itemCount: surah.ayahs.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return _buildSurahHeader(context, surah);
+                        }
+                        final ayah = surah.ayahs[index - 1];
+                        return _buildAyahCard(
+                          context,
+                          surah.nameLatin,
+                          ayah,
+                          textColor,
+                          subTextColor,
+                          cardBg,
+                        );
+                      },
+                    ),
                   ),
                   // Audio player bar overlay at bottom
                   Positioned(
@@ -179,91 +225,103 @@ class QuranSurahDetailPage extends StatelessWidget {
         final barBg = isDark ? AppColors.darkSurface : AppColors.primary;
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: barBg,
-          child: Row(
-            children: [
-              // Play/Pause button
-              if (audioState.status == AudioStatus.loading)
-                const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: barBg,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: Row(
+              children: [
+                // Play/Pause button
+                if (audioState.status == AudioStatus.loading)
+                  const SizedBox(
+                    width: 32,
+                    height: 32,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.white,
+                    ),
+                  )
+                else
+                  IconButton(
+                    icon: Icon(
+                      audioState.status == AudioStatus.playing
+                          ? Icons.pause_circle_filled
+                          : Icons.play_circle_filled,
+                      color: AppColors.white,
+                      size: 32,
+                    ),
+                    onPressed: () {
+                      final cubit = context.read<AudioPlayerCubit>();
+                      if (audioState.status == AudioStatus.playing) {
+                        cubit.pause();
+                      } else {
+                        cubit.resume();
+                      }
+                    },
+                    constraints: const BoxConstraints(),
+                    padding: EdgeInsets.zero,
                   ),
-                )
-              else
+                const SizedBox(width: 12),
+                // Label + progress
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        audioState.playingLabel,
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      LinearProgressIndicator(
+                        value: audioState.duration.inMilliseconds > 0
+                            ? audioState.position.inMilliseconds /
+                                audioState.duration.inMilliseconds
+                            : 0,
+                        backgroundColor: AppColors.white.withValues(alpha: 0.2),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.secondary,
+                        ),
+                        minHeight: 3,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Duration
+                Text(
+                  _formatDuration(audioState.position),
+                  style: const TextStyle(color: AppColors.white, fontSize: 11),
+                ),
+                const SizedBox(width: 8),
+                // Stop
                 IconButton(
-                  icon: Icon(
-                    audioState.status == AudioStatus.playing
-                        ? Icons.pause_circle_filled
-                        : Icons.play_circle_filled,
+                  icon: const Icon(
+                    Icons.close,
                     color: AppColors.white,
-                    size: 32,
+                    size: 20,
                   ),
-                  onPressed: () {
-                    final cubit = context.read<AudioPlayerCubit>();
-                    if (audioState.status == AudioStatus.playing) {
-                      cubit.pause();
-                    } else if (audioState.currentUrl != null) {
-                      cubit.play(audioState.currentUrl!);
-                    }
-                  },
+                  onPressed: () => context.read<AudioPlayerCubit>().stop(),
                   constraints: const BoxConstraints(),
                   padding: EdgeInsets.zero,
                 ),
-              const SizedBox(width: 12),
-              // Progress bar
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      audioState.status == AudioStatus.loading
-                          ? 'Loading...'
-                          : audioState.status == AudioStatus.playing
-                          ? 'Playing'
-                          : 'Paused',
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    LinearProgressIndicator(
-                      value: audioState.duration.inMilliseconds > 0
-                          ? audioState.position.inMilliseconds /
-                                audioState.duration.inMilliseconds
-                          : 0,
-                      backgroundColor: AppColors.white.withValues(alpha: 0.2),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.secondary,
-                      ),
-                      minHeight: 3,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Duration text
-              Text(
-                _formatDuration(audioState.position),
-                style: const TextStyle(color: AppColors.white, fontSize: 11),
-              ),
-              const SizedBox(width: 8),
-              // Stop button
-              IconButton(
-                icon: const Icon(Icons.close, color: AppColors.white, size: 20),
-                onPressed: () {
-                  context.read<AudioPlayerCubit>().stop();
-                },
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -299,29 +357,34 @@ class QuranSurahDetailPage extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '${surah.revelation} • ${surah.numberOfAyahs} Ayahs',
+            '${surah.revelation} • ${surah.numberOfAyahs} Ayat',
             style: AppTypography.textTheme.bodyMedium?.copyWith(
               color: AppColors.white.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 20),
-          // Play Audio & Download buttons
+          // Play full surah (sequential ayahs)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Play full surah audio
               BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
                 builder: (context, audioState) {
-                  final isPlayingThis =
-                      audioState.currentUrl == surah.audioUrl &&
+                  final isPlaying =
+                      audioState.isFullSurahMode &&
                       audioState.status == AudioStatus.playing;
                   return GestureDetector(
                     onTap: () {
                       final cubit = context.read<AudioPlayerCubit>();
-                      if (isPlayingThis) {
+                      if (isPlaying) {
                         cubit.pause();
+                      } else if (audioState.isFullSurahMode &&
+                          audioState.status == AudioStatus.paused) {
+                        cubit.resume();
                       } else {
-                        cubit.play(surah.audioUrl);
+                        cubit.playFullSurah(
+                          surahName: surah.nameLatin,
+                          ayahs: surah.ayahs,
+                        );
                       }
                     },
                     child: Container(
@@ -339,13 +402,13 @@ class QuranSurahDetailPage extends StatelessWidget {
                       child: Row(
                         children: [
                           Icon(
-                            isPlayingThis ? Icons.pause : Icons.play_arrow,
+                            isPlaying ? Icons.pause : Icons.play_arrow,
                             color: AppColors.white,
                             size: 18,
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            isPlayingThis ? 'Pause' : 'Play Audio',
+                            isPlaying ? 'Pause' : 'Play Full Surah',
                             style: const TextStyle(
                               color: AppColors.white,
                               fontWeight: FontWeight.w600,
@@ -357,37 +420,6 @@ class QuranSurahDetailPage extends StatelessWidget {
                     ),
                   );
                 },
-              ),
-              const SizedBox(width: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: AppColors.white.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.download_outlined,
-                      color: AppColors.white,
-                      size: 18,
-                    ),
-                    SizedBox(width: 6),
-                    Text(
-                      'Download',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
@@ -403,7 +435,7 @@ class QuranSurahDetailPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildToggleChip(Icons.text_fields, 'Size'),
-                _buildToggleChip(Icons.translate, 'English', selected: true),
+                _buildToggleChip(Icons.translate, 'Terjemah', selected: true),
                 _buildToggleChip(Icons.abc, 'Latin'),
                 _buildToggleChip(Icons.menu_book_outlined, 'Tafsir'),
               ],
@@ -448,130 +480,196 @@ class QuranSurahDetailPage extends StatelessWidget {
 
   Widget _buildAyahCard(
     BuildContext context,
+    String surahName,
     AyahEntity ayah,
     Color textColor,
     Color subTextColor,
     Color cardBg,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Arabic text
-          Text(
-            ayah.arab,
-            textAlign: TextAlign.right,
-            style: AppTypography.arabicFont.copyWith(
-              color: textColor,
-              fontSize: 26,
-              height: 2.0,
-            ),
-            textDirection: TextDirection.rtl,
+    return BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
+      buildWhen: (prev, curr) =>
+          prev.activeAyahNumber != curr.activeAyahNumber ||
+          prev.isFullSurahMode != curr.isFullSurahMode ||
+          prev.status != curr.status ||
+          prev.currentUrl != curr.currentUrl,
+      builder: (context, audioState) {
+        final isActiveAyah =
+            audioState.activeAyahNumber == ayah.ayahNumber &&
+            (audioState.status == AudioStatus.playing ||
+                audioState.status == AudioStatus.loading ||
+                audioState.status == AudioStatus.paused);
+
+        final isFullMode = audioState.isFullSurahMode;
+        final isGrayed =
+            isFullMode &&
+            audioState.status != AudioStatus.idle &&
+            !isActiveAyah;
+
+        // Colors based on active/inactive state
+        final arabColor = isActiveAyah
+            ? AppColors.primary
+            : isGrayed
+            ? textColor.withValues(alpha: 0.3)
+            : textColor;
+        final translationColor = isActiveAyah
+            ? subTextColor
+            : isGrayed
+            ? subTextColor.withValues(alpha: 0.3)
+            : subTextColor;
+        final ayahCardBg = isActiveAyah
+            ? AppColors.primary.withValues(alpha: 0.08)
+            : cardBg;
+        final borderColor = isActiveAyah
+            ? AppColors.primary.withValues(alpha: 0.3)
+            : null;
+
+        return Container(
+          key: _ayahKeys[ayah.ayahNumber],
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: ayahCardBg,
+            borderRadius: BorderRadius.circular(12),
+            border: borderColor != null
+                ? Border.all(color: borderColor, width: 1.5)
+                : null,
           ),
-          const SizedBox(height: 16),
-          // Translation
-          Text(
-            ayah.translation,
-            style: AppTypography.textTheme.bodyLarge?.copyWith(
-              color: subTextColor,
-              height: 1.6,
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Bottom action row
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
+              // Arabic text
+              Text(
+                ayah.arab,
+                textAlign: TextAlign.right,
+                style: AppTypography.arabicFont.copyWith(
+                  color: arabColor,
+                  fontSize: 26,
+                  height: 2.0,
                 ),
-                child: Center(
-                  child: Text(
-                    ayah.ayahNumber.toString(),
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                textDirection: TextDirection.rtl,
+              ),
+              const SizedBox(height: 16),
+              // Translation
+              Text(
+                ayah.translation,
+                style: AppTypography.textTheme.bodyLarge?.copyWith(
+                  color: translationColor,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Bottom action row
+              Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: isActiveAyah
+                          ? AppColors.primary.withValues(alpha: 0.2)
+                          : AppColors.primary.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        ayah.ayahNumber.toString(),
+                        style: TextStyle(
+                          color: isActiveAyah
+                              ? AppColors.primary
+                              : AppColors.primary.withValues(
+                                  alpha: isGrayed ? 0.3 : 1.0,
+                                ),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                icon: Icon(
-                  Icons.bookmark_border,
-                  color: subTextColor,
-                  size: 20,
-                ),
-                onPressed: () {},
-                constraints: const BoxConstraints(),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-              ),
-              IconButton(
-                icon: Icon(Icons.share_outlined, color: subTextColor, size: 20),
-                onPressed: () {},
-                constraints: const BoxConstraints(),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-              ),
-              // Per-ayah play button
-              BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
-                builder: (context, audioState) {
-                  final audioUrl = ayah.audioUrl;
-                  if (audioUrl == null || audioUrl.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-                  final isPlayingThis =
-                      audioState.currentUrl == audioUrl &&
-                      audioState.status == AudioStatus.playing;
-                  final isLoadingThis =
-                      audioState.currentUrl == audioUrl &&
-                      audioState.status == AudioStatus.loading;
-
-                  return IconButton(
-                    icon: isLoadingThis
-                        ? SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: subTextColor,
-                            ),
-                          )
-                        : Icon(
-                            isPlayingThis
-                                ? Icons.pause_circle_outline
-                                : Icons.play_circle_outline,
-                            color: isPlayingThis
-                                ? AppColors.primary
-                                : subTextColor,
-                            size: 20,
-                          ),
-                    onPressed: () {
-                      final cubit = context.read<AudioPlayerCubit>();
-                      if (isPlayingThis) {
-                        cubit.pause();
-                      } else {
-                        cubit.play(audioUrl);
-                      }
-                    },
+                  const Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      Icons.bookmark_border,
+                      color: isGrayed
+                          ? subTextColor.withValues(alpha: 0.2)
+                          : subTextColor,
+                      size: 20,
+                    ),
+                    onPressed: () {},
                     constraints: const BoxConstraints(),
                     padding: const EdgeInsets.symmetric(horizontal: 8),
-                  );
-                },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.share_outlined,
+                      color: isGrayed
+                          ? subTextColor.withValues(alpha: 0.2)
+                          : subTextColor,
+                      size: 20,
+                    ),
+                    onPressed: () {},
+                    constraints: const BoxConstraints(),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  // Per-ayah play button
+                  Builder(
+                    builder: (context) {
+                      final audioUrl = ayah.audioUrl;
+                      if (audioUrl == null || audioUrl.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      final isPlayingThis =
+                          audioState.currentUrl == audioUrl &&
+                          audioState.status == AudioStatus.playing;
+                      final isLoadingThis =
+                          audioState.currentUrl == audioUrl &&
+                          audioState.status == AudioStatus.loading;
+
+                      return IconButton(
+                        icon: isLoadingThis
+                            ? SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: isGrayed
+                                      ? subTextColor.withValues(alpha: 0.2)
+                                      : subTextColor,
+                                ),
+                              )
+                            : Icon(
+                                isPlayingThis
+                                    ? Icons.pause_circle_filled
+                                    : Icons.play_circle_outline,
+                                color: isPlayingThis
+                                    ? AppColors.primary
+                                    : isGrayed
+                                    ? subTextColor.withValues(alpha: 0.2)
+                                    : subTextColor,
+                                size: 22,
+                              ),
+                        onPressed: () {
+                          final cubit = context.read<AudioPlayerCubit>();
+                          if (isPlayingThis) {
+                            cubit.pause();
+                          } else {
+                            cubit.playAyah(
+                              url: audioUrl,
+                              surahName: surahName,
+                              ayahNumber: ayah.ayahNumber,
+                            );
+                          }
+                        },
+                        constraints: const BoxConstraints(),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
