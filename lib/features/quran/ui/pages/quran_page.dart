@@ -26,9 +26,13 @@ class QuranPage extends StatelessWidget {
           backgroundColor: bgColor,
           elevation: 0,
           leadingWidth: 48,
-          leading: IconButton(
-            icon: Icon(Icons.menu, color: textColor),
-            onPressed: () {},
+          leading: Builder(
+            builder: (ctx) => IconButton(
+              icon: Icon(Icons.menu, color: textColor),
+              onPressed: () {
+                Scaffold.of(ctx).openDrawer();
+              },
+            ),
           ),
           title: Text(
             'Al-Quran',
@@ -39,6 +43,21 @@ class QuranPage extends StatelessWidget {
           ),
           centerTitle: true,
           actions: [
+            Builder(
+              builder: (ctx) => IconButton(
+                icon: Icon(Icons.refresh, color: textColor),
+                tooltip: 'Refresh dari server',
+                onPressed: () {
+                  ctx.read<QuranBloc>().add(RefreshSurahs());
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    const SnackBar(
+                      content: Text('Memperbarui data dari server...'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+            ),
             IconButton(
               icon: Icon(Icons.search, color: textColor),
               onPressed: () {},
@@ -96,25 +115,35 @@ class QuranPage extends StatelessWidget {
                 ),
               );
             } else if (state is QuranLoaded) {
-              return CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: _buildGreetingAndLastRead(textColor, subTextColor),
-                  ),
-                  SliverToBoxAdapter(child: _buildTabBar(subTextColor)),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final surah = state.surahs[index];
-                      return _buildSurahTile(
-                        context,
-                        surah,
-                        textColor,
-                        subTextColor,
-                        cardBg,
-                      );
-                    }, childCount: state.surahs.length),
-                  ),
-                ],
+              return RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () async {
+                  context.read<QuranBloc>().add(RefreshSurahs());
+                  // Wait for state change
+                  await context.read<QuranBloc>().stream.firstWhere(
+                    (s) => s is QuranLoaded || s is QuranError,
+                  );
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: _buildGreetingAndLastRead(textColor, subTextColor),
+                    ),
+                    SliverToBoxAdapter(child: _buildTabBar(subTextColor)),
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final surah = state.surahs[index];
+                        return _buildSurahTile(
+                          context,
+                          surah,
+                          textColor,
+                          subTextColor,
+                          cardBg,
+                        );
+                      }, childCount: state.surahs.length),
+                    ),
+                  ],
+                ),
               );
             }
             return const SizedBox();
@@ -145,7 +174,6 @@ class QuranPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          // Last Read card
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -298,7 +326,6 @@ class QuranPage extends StatelessWidget {
   ) {
     return InkWell(
       onTap: () {
-        // Use pushNamed to keep dashboard + bottom bar in the stack
         context.pushNamed(
           'surah_detail',
           pathParameters: {'id': surah.number.toString()},
@@ -316,7 +343,6 @@ class QuranPage extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Number circle
             Container(
               width: 40,
               height: 40,
@@ -335,7 +361,6 @@ class QuranPage extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            // Surah name and info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +382,6 @@ class QuranPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Arabic name
             Text(
               surah.name,
               style: AppTypography.arabicFont.copyWith(

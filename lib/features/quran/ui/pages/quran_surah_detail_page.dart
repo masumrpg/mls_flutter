@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../bloc/surah_detail_bloc.dart';
+import '../../bloc/audio_player_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
@@ -24,8 +25,14 @@ class QuranSurahDetailPage extends StatelessWidget {
     final subTextColor = isDark ? AppColors.darkTextSecondary : AppColors.grey;
     final cardBg = isDark ? AppColors.darkSurface : AppColors.lightGrey;
 
-    return BlocProvider(
-      create: (context) => sl<SurahDetailBloc>()..add(FetchSurahDetail(surahNumber)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              sl<SurahDetailBloc>()..add(FetchSurahDetail(surahNumber)),
+        ),
+        BlocProvider(create: (context) => AudioPlayerCubit()),
+      ],
       child: Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
@@ -124,16 +131,34 @@ class QuranSurahDetailPage extends StatelessWidget {
               );
             } else if (state is SurahDetailLoaded) {
               final surah = state.surahDetail;
-              return ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: surah.ayahs.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return _buildSurahHeader(surah);
-                  }
-                  final ayah = surah.ayahs[index - 1];
-                  return _buildAyahCard(ayah, textColor, subTextColor, cardBg);
-                },
+              return Stack(
+                children: [
+                  // Ayah list (full height)
+                  ListView.builder(
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: surah.ayahs.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return _buildSurahHeader(context, surah);
+                      }
+                      final ayah = surah.ayahs[index - 1];
+                      return _buildAyahCard(
+                        context,
+                        ayah,
+                        textColor,
+                        subTextColor,
+                        cardBg,
+                      );
+                    },
+                  ),
+                  // Audio player bar overlay at bottom
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: _buildAudioPlayerBar(),
+                  ),
+                ],
               );
             }
             return const SizedBox();
@@ -143,7 +168,115 @@ class QuranSurahDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSurahHeader(SurahDetailEntity surah) {
+  Widget _buildAudioPlayerBar() {
+    return BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
+      builder: (context, audioState) {
+        if (audioState.status == AudioStatus.idle) {
+          return const SizedBox.shrink();
+        }
+
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final barBg = isDark ? AppColors.darkSurface : AppColors.primary;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          color: barBg,
+          child: Row(
+            children: [
+              // Play/Pause button
+              if (audioState.status == AudioStatus.loading)
+                const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.white,
+                  ),
+                )
+              else
+                IconButton(
+                  icon: Icon(
+                    audioState.status == AudioStatus.playing
+                        ? Icons.pause_circle_filled
+                        : Icons.play_circle_filled,
+                    color: AppColors.white,
+                    size: 32,
+                  ),
+                  onPressed: () {
+                    final cubit = context.read<AudioPlayerCubit>();
+                    if (audioState.status == AudioStatus.playing) {
+                      cubit.pause();
+                    } else if (audioState.currentUrl != null) {
+                      cubit.play(audioState.currentUrl!);
+                    }
+                  },
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                ),
+              const SizedBox(width: 12),
+              // Progress bar
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      audioState.status == AudioStatus.loading
+                          ? 'Loading...'
+                          : audioState.status == AudioStatus.playing
+                          ? 'Playing'
+                          : 'Paused',
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    LinearProgressIndicator(
+                      value: audioState.duration.inMilliseconds > 0
+                          ? audioState.position.inMilliseconds /
+                                audioState.duration.inMilliseconds
+                          : 0,
+                      backgroundColor: AppColors.white.withValues(alpha: 0.2),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        AppColors.secondary,
+                      ),
+                      minHeight: 3,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Duration text
+              Text(
+                _formatDuration(audioState.position),
+                style: const TextStyle(color: AppColors.white, fontSize: 11),
+              ),
+              const SizedBox(width: 8),
+              // Stop button
+              IconButton(
+                icon: const Icon(Icons.close, color: AppColors.white, size: 20),
+                onPressed: () {
+                  context.read<AudioPlayerCubit>().stop();
+                },
+                constraints: const BoxConstraints(),
+                padding: EdgeInsets.zero,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
+  Widget _buildSurahHeader(BuildContext context, SurahDetailEntity surah) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(24),
@@ -176,12 +309,85 @@ class QuranSurahDetailPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildActionButton(Icons.play_arrow, 'Play Audio', filled: true),
+              // Play full surah audio
+              BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
+                builder: (context, audioState) {
+                  final isPlayingThis =
+                      audioState.currentUrl == surah.audioUrl &&
+                      audioState.status == AudioStatus.playing;
+                  return GestureDetector(
+                    onTap: () {
+                      final cubit = context.read<AudioPlayerCubit>();
+                      if (isPlayingThis) {
+                        cubit.pause();
+                      } else {
+                        cubit.play(surah.audioUrl);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: AppColors.white.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            isPlayingThis ? Icons.pause : Icons.play_arrow,
+                            color: AppColors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            isPlayingThis ? 'Pause' : 'Play Audio',
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
               const SizedBox(width: 12),
-              _buildActionButton(
-                Icons.download_outlined,
-                'Download',
-                filled: false,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: AppColors.white.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.download_outlined,
+                      color: AppColors.white,
+                      size: 18,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      'Download',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -201,37 +407,6 @@ class QuranSurahDetailPage extends StatelessWidget {
                 _buildToggleChip(Icons.abc, 'Latin'),
                 _buildToggleChip(Icons.menu_book_outlined, 'Tafsir'),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    IconData icon,
-    String label, {
-    required bool filled,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: filled
-            ? AppColors.white.withValues(alpha: 0.2)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.white.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.white, size: 18),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
             ),
           ),
         ],
@@ -272,6 +447,7 @@ class QuranSurahDetailPage extends StatelessWidget {
   }
 
   Widget _buildAyahCard(
+    BuildContext context,
     AyahEntity ayah,
     Color textColor,
     Color subTextColor,
@@ -346,15 +522,51 @@ class QuranSurahDetailPage extends StatelessWidget {
                 constraints: const BoxConstraints(),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.play_circle_outline,
-                  color: subTextColor,
-                  size: 20,
-                ),
-                onPressed: () {},
-                constraints: const BoxConstraints(),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+              // Per-ayah play button
+              BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
+                builder: (context, audioState) {
+                  final audioUrl = ayah.audioUrl;
+                  if (audioUrl == null || audioUrl.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  final isPlayingThis =
+                      audioState.currentUrl == audioUrl &&
+                      audioState.status == AudioStatus.playing;
+                  final isLoadingThis =
+                      audioState.currentUrl == audioUrl &&
+                      audioState.status == AudioStatus.loading;
+
+                  return IconButton(
+                    icon: isLoadingThis
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: subTextColor,
+                            ),
+                          )
+                        : Icon(
+                            isPlayingThis
+                                ? Icons.pause_circle_outline
+                                : Icons.play_circle_outline,
+                            color: isPlayingThis
+                                ? AppColors.primary
+                                : subTextColor,
+                            size: 20,
+                          ),
+                    onPressed: () {
+                      final cubit = context.read<AudioPlayerCubit>();
+                      if (isPlayingThis) {
+                        cubit.pause();
+                      } else {
+                        cubit.play(audioUrl);
+                      }
+                    },
+                    constraints: const BoxConstraints(),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  );
+                },
               ),
             ],
           ),

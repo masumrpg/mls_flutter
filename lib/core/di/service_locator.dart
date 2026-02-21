@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/storage_service.dart';
 import '../network/api_client.dart';
+import '../database/app_database.dart';
 
 import '../../features/sholat/data/datasources/sholat_remote_datasource.dart';
 import '../../features/sholat/data/repositories/sholat_repository_impl.dart';
@@ -9,6 +10,7 @@ import '../../features/sholat/domain/repositories/sholat_repository.dart';
 import '../../features/sholat/bloc/sholat_schedule_bloc.dart';
 
 import '../../features/quran/data/datasources/quran_remote_datasource.dart';
+import '../../features/quran/data/datasources/quran_local_datasource.dart';
 import '../../features/quran/data/repositories/quran_repository_impl.dart';
 import '../../features/quran/domain/repositories/quran_repository.dart';
 import '../../features/quran/bloc/quran_bloc.dart';
@@ -39,6 +41,9 @@ Future<void> setupServiceLocator() async {
   // Network
   sl.registerLazySingleton(() => ApiClient());
 
+  // Database
+  sl.registerLazySingleton<AppDatabase>(() => AppDatabase.instance);
+
   // ─── Sholat Feature ──────────────────────────────────────────────
   sl.registerLazySingleton<SholatRemoteDataSource>(
     () => SholatRemoteDataSourceImpl(sl()),
@@ -57,8 +62,12 @@ Future<void> setupServiceLocator() async {
     () => QuranRemoteDataSourceImpl(sl()),
   );
 
+  sl.registerLazySingleton<QuranLocalDataSource>(
+    () => QuranLocalDataSource(sl()),
+  );
+
   sl.registerLazySingleton<QuranRepository>(
-    () => QuranRepositoryImpl(sl()),
+    () => QuranRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
   );
 
   sl.registerFactory<QuranBloc>(

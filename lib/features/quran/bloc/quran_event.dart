@@ -8,3 +8,5 @@ abstract class QuranEvent extends Equatable {
 }
 
 class FetchSurahs extends QuranEvent {}
+
+class RefreshSurahs extends QuranEvent {}

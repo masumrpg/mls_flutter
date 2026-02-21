@@ -11,6 +11,7 @@ class QuranBloc extends Bloc<QuranEvent, QuranState> {
 
   QuranBloc({required this.repository}) : super(const QuranInitial()) {
     on<FetchSurahs>(_onFetchSurahs);
+    on<RefreshSurahs>(_onRefreshSurahs);
   }
 
   Future<void> _onFetchSurahs(
@@ -19,6 +20,18 @@ class QuranBloc extends Bloc<QuranEvent, QuranState> {
   ) async {
     emit(const QuranLoading());
     final result = await repository.getSurahs();
+    result.fold(
+      (failure) => emit(QuranError(failure.message)),
+      (surahs) => emit(QuranLoaded(surahs)),
+    );
+  }
+
+  Future<void> _onRefreshSurahs(
+    RefreshSurahs event,
+    Emitter<QuranState> emit,
+  ) async {
+    // Don't emit Loading to keep existing list visible during refresh
+    final result = await repository.refreshSurahs();
     result.fold(
       (failure) => emit(QuranError(failure.message)),
       (surahs) => emit(QuranLoaded(surahs)),
