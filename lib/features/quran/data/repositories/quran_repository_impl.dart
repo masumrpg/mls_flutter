@@ -56,11 +56,14 @@ class QuranRepositoryImpl implements QuranRepository {
     try {
       // Try local first
       final localDetail = await localDataSource.getSurahDetail(surahNumber);
-      if (localDetail != null) {
+
+      // Only return local cache if ALL ayahs are present
+      if (localDetail != null &&
+          localDetail.ayahs.length == localDetail.numberOfAyahs) {
         return Right(localDetail.toEntity());
       }
 
-      // Fallback to remote
+      // Fallback to remote if missing ayahs or missing completely
       final model = await remoteDataSource.getSurahDetail(surahNumber);
       await localDataSource.saveSurahDetail(model);
       return Right(model.toEntity());

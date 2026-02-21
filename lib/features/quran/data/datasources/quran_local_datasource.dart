@@ -11,7 +11,9 @@ class QuranLocalDataSource {
   // ─── Surahs ──────────────────────────────────────────────────────
 
   Future<List<SurahModel>> getSurahs() async {
-    final rows = await db.select(db.surahsTable).get();
+    final rows = await (db.select(
+      db.surahsTable,
+    )..orderBy([(t) => OrderingTerm(expression: t.number)])).get();
     return rows
         .map((row) => SurahModel(
               number: row.number,

@@ -29,9 +29,46 @@ class QuranRemoteDataSourceImpl implements QuranRemoteDataSource {
   @override
   Future<SurahDetailModel> getSurahDetail(int surahNumber) async {
     try {
-      final response = await apiClient.get('/quran/$surahNumber');
-      final data = response.data['data'] as Map<String, dynamic>;
-      return SurahDetailModel.fromJson(data);
+      int page = 1;
+      const int limit = 100;
+      bool hasMore = true;
+
+      Map<String, dynamic>? baseData;
+      List<dynamic> allAyahs = [];
+
+      while (hasMore) {
+        final response = await apiClient.get(
+          '/quran/$surahNumber',
+          queryParameters: {'limit': limit, 'page': page},
+        );
+
+        final data = response.data['data'] as Map<String, dynamic>;
+
+        // Clone the base structure from the first page
+        baseData ??= Map<String, dynamic>.from(data);
+
+        // Add ayahs from current page
+        final ayahs = data['ayahs'] as List<dynamic>;
+        allAyahs.addAll(ayahs);
+
+        // Check pagination if present
+        final pagination = response.data['pagination'];
+        if (pagination != null) {
+          final total = pagination['total'] as int;
+          if (page * limit >= total) {
+            hasMore = false;
+          } else {
+            page++;
+          }
+        } else {
+          // If no pagination metadata, assume it's complete
+          hasMore = false;
+        }
+      }
+
+      // Re-assign the aggregated ayahs into the base payload
+      baseData!['ayahs'] = allAyahs;
+      return SurahDetailModel.fromJson(baseData);
     } catch (e) {
       throw ServerException('Failed to fetch surah detail: $e');
     }
