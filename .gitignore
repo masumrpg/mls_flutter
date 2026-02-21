@@ -50,3 +50,4 @@ env/.env.*
 
 # Plan
 PLAN.md
+/plan

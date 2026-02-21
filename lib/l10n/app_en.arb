@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "appName": "Flutter BLoC App",
+  "@appName": {
+    "description": "The title of the application"
+  },
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "A hello world message"
+  }
+}

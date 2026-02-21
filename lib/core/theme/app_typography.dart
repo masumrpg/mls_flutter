@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class AppTypography {
+  static TextStyle get arabicFont {
+    return GoogleFonts.amiri(
+      fontSize: 28,
+      height: 2.0,
+      fontWeight: FontWeight.w600,
+    );
+  }
+
+  static TextTheme get textTheme {
+    return const TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 57,
+        fontWeight: FontWeight.bold,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 45,
+        fontWeight: FontWeight.bold,
+      ),
+      displaySmall: TextStyle(
+        fontSize: 36,
+        fontWeight: FontWeight.bold,
+      ),
+      headlineLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.w600,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w600,
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      titleSmall: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+      ),
+      bodySmall: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.normal,
+      ),
+    );
+  }
+}

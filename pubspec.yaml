@@ -1,4 +1,4 @@
-name: flutter_boilerplate
+name: mls_flutter
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -53,6 +53,8 @@ dependencies:
   uuid: ^4.5.2
   path_provider: ^2.1.5
   path: ^1.9.1
+  dartz: ^0.10.1
+  google_fonts: ^8.0.2
 
 dev_dependencies:
   flutter_test:
