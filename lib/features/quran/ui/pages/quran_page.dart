@@ -6,6 +6,7 @@ import '../../cubit/bookmark_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/custom_error_widget.dart';
 
 class QuranPage extends StatelessWidget {
   const QuranPage({super.key});
@@ -72,48 +73,9 @@ class QuranPage extends StatelessWidget {
                 child: CircularProgressIndicator(color: AppColors.primary),
               );
             } else if (state is QuranError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: AppColors.error,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Gagal Memuat Surah',
-                        style: AppTypography.textTheme.titleLarge?.copyWith(
-                          color: textColor,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        state.message,
-                        style: AppTypography.textTheme.bodyMedium?.copyWith(
-                          color: subTextColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<QuranBloc>().add(FetchSurahs());
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                        ),
-                        child: const Text(
-                          'Coba Lagi',
-                          style: TextStyle(color: AppColors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              return CustomErrorWidget(
+                message: state.message,
+                onRetry: () => context.read<QuranBloc>().add(FetchSurahs()),
               );
             } else if (state is QuranLoaded) {
               return RefreshIndicator(
