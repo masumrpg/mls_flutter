@@ -40,14 +40,9 @@ class _QuranPageState extends State<QuranPage> {
         appBar: AppBar(
           backgroundColor: bgColor,
           elevation: 0,
-          leadingWidth: 48,
-          leading: Builder(
-            builder: (ctx) => IconButton(
-              icon: Icon(Icons.menu, color: textColor),
-              onPressed: () {
-                Scaffold.of(ctx).openDrawer();
-              },
-            ),
+          leading: IconButton(
+            icon: Icon(Icons.menu, color: textColor),
+            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
           title: Text(
             'Al-Quran',
@@ -56,7 +51,6 @@ class _QuranPageState extends State<QuranPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          centerTitle: true,
           actions: [
             Builder(
               builder: (ctx) => IconButton(
