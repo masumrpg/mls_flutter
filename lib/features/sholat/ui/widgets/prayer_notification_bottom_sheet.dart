@@ -16,10 +16,19 @@ class PrayerNotificationBottomSheet extends StatefulWidget {
   });
 
   @override
-  State<PrayerNotificationBottomSheet> createState() => _PrayerNotificationBottomSheetState();
+  State<PrayerNotificationBottomSheet> createState() =>
+      _PrayerNotificationBottomSheetState();
 }
 
-class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottomSheet> {
+class _PrayerNotificationBottomSheetState
+    extends State<PrayerNotificationBottomSheet> {
+  Color get _bgColor => Theme.of(context).scaffoldBackgroundColor;
+  Color get _textColor => Theme.of(context).brightness == Brightness.dark
+      ? AppColors.darkText
+      : AppColors.black;
+  // Color get _subTextColor => Theme.of(context).brightness == Brightness.dark ? AppColors.darkTextSecondary : AppColors.grey;
+  Color get _cardBg => Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : AppColors.white;
+
   late int _selectedAlertType;
   late int _selectedPreReminder;
 
@@ -44,10 +53,10 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: _textColor.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? const Color(0xFF2DD4BF) : Colors.transparent,
+            color: isSelected ? AppColors.primary : Colors.transparent,
             width: 1.5,
           ),
         ),
@@ -57,15 +66,15 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? const Color(0xFF2DD4BF)
-                    : Colors.white.withOpacity(0.1),
+                    ? AppColors.primary
+                    : _textColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
                 color: isSelected
-                    ? AppColors.darkBackground
-                    : Colors.white.withOpacity(0.8),
+                    ? _bgColor
+                    : _textColor.withValues(alpha: 0.8),
                 size: 20,
               ),
             ),
@@ -76,8 +85,8 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   color: isSelected
-                      ? Colors.white
-                      : Colors.white.withOpacity(0.6),
+                      ? _textColor
+                      : _textColor.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -88,8 +97,8 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? const Color(0xFF2DD4BF)
-                      : Colors.white.withOpacity(0.2),
+                      ? AppColors.primary
+                      : _textColor.withValues(alpha: 0.2),
                   width: 2,
                 ),
               ),
@@ -98,8 +107,8 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
                       child: Container(
                         width: 12,
                         height: 12,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF2DD4BF),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -139,13 +148,11 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFF2DD4BF).withOpacity(0.1)
-                      : Colors.white.withOpacity(0.05),
+                      ? AppColors.primary.withValues(alpha: 0.1)
+                      : _textColor.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected
-                        ? const Color(0xFF2DD4BF)
-                        : Colors.transparent,
+                    color: isSelected ? AppColors.primary : Colors.transparent,
                     width: 1.5,
                   ),
                 ),
@@ -153,8 +160,8 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
                   label,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: isSelected
-                        ? const Color(0xFF2DD4BF)
-                        : Colors.white.withOpacity(0.5),
+                        ? AppColors.primary
+                        : _textColor.withValues(alpha: 0.5),
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
@@ -180,8 +187,8 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
         top: 12,
         bottom: MediaQuery.of(context).padding.bottom + 24,
       ),
-      decoration: const BoxDecoration(
-        color: Color(0xFF072A24), // Even deeper teal for modal
+      decoration: BoxDecoration(
+        color: _cardBg, // Even deeper teal for modal
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: Column(
@@ -193,7 +200,7 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
               width: 45,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: _textColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2.5),
               ),
             ),
@@ -206,12 +213,12 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
                 '${widget.prayerName} Notification',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: _textColor,
                 ),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close, color: Colors.white),
+                icon: Icon(Icons.close, color: _textColor),
               ),
             ],
           ),
@@ -221,7 +228,7 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
             style: theme.textTheme.labelMedium?.copyWith(
               letterSpacing: 1.5,
               fontWeight: FontWeight.bold,
-              color: Colors.white.withOpacity(0.4),
+              color: _textColor.withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 16),
@@ -240,7 +247,7 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
             style: theme.textTheme.labelMedium?.copyWith(
               letterSpacing: 1.5,
               fontWeight: FontWeight.bold,
-              color: Colors.white.withOpacity(0.4),
+              color: _textColor.withValues(alpha: 0.4),
             ),
           ),
           const SizedBox(height: 16),
@@ -255,14 +262,14 @@ class _PrayerNotificationBottomSheetState extends State<PrayerNotificationBottom
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2DD4BF),
-                foregroundColor: AppColors.darkBackground,
+                backgroundColor: AppColors.primary,
+                foregroundColor: _bgColor,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Save Settings',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),

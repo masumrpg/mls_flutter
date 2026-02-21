@@ -21,8 +21,11 @@ class PrayerSchedulesTable extends Table {
 
 class NotificationSettingsTable extends Table {
   TextColumn get prayerName => text()(); // e.g., "Imsak", "Subuh", "Dzuhur"
-  IntColumn get alertType => integer().withDefault(const Constant(1))(); // 0: Mute, 1: Notification Only, 2: Adhan Sound
-  IntColumn get preReminderMinutes => integer().withDefault(const Constant(0))(); // 0, 5, 10, 15, 20
+  IntColumn get alertType => integer().withDefault(
+    const Constant(1),
+  )(); // 0: Mute, 1: Notification Only, 2: Adhan Sound
+  IntColumn get preReminderMinutes =>
+      integer().withDefault(const Constant(0))(); // 0, 5, 10, 15, 20
 
   @override
   Set<Column> get primaryKey => {prayerName};

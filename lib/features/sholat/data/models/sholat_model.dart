@@ -1,10 +1,7 @@
 import '../../domain/entities/sholat_entity.dart';
 
 class SholatModel extends SholatEntity {
-  const SholatModel({
-    required super.id,
-    required super.name,
-  });
+  const SholatModel({required super.id, required super.name});
 
   factory SholatModel.fromJson(Map<String, dynamic> json) {
     return SholatModel(
@@ -14,16 +11,10 @@ class SholatModel extends SholatEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-    };
+    return {'id': id, 'name': name};
   }
 
   SholatEntity toEntity() {
-    return SholatEntity(
-      id: id,
-      name: name,
-    );
+    return SholatEntity(id: id, name: name);
   }
 }

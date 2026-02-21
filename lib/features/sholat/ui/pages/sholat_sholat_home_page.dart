@@ -11,7 +11,8 @@ class SholatSholatHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<SholatScheduleBloc>()..add(const FetchSholatSchedule()),
+      create: (context) =>
+          sl<SholatScheduleBloc>()..add(const FetchSholatSchedule()),
       child: const SholatView(),
     );
   }
@@ -22,32 +23,51 @@ class SholatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     // A dark minimal background
-    const darkBg = Color(0xFF0F172A);
+    final darkBg = isDark
+        ? AppColors.darkBackground
+        : theme.scaffoldBackgroundColor;
+    final textColor = isDark ? AppColors.darkText : AppColors.black;
+    final subTextColor = isDark ? AppColors.darkTextSecondary : AppColors.grey;
+    final cardBg = isDark ? AppColors.darkSurface : AppColors.white;
 
     return Scaffold(
       backgroundColor: darkBg,
       body: SafeArea(
         child: BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
           builder: (context, state) {
-            if (state is SholatScheduleLoading || state is SholatScheduleInitial) {
-              return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+            if (state is SholatScheduleLoading ||
+                state is SholatScheduleInitial) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
             } else if (state is SholatScheduleError) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       state.message,
-                      style: AppTypography.textTheme.bodyLarge?.copyWith(color: Colors.white),
+                      style: AppTypography.textTheme.bodyLarge?.copyWith(
+                        color: textColor,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<SholatScheduleBloc>().add(const FetchSholatSchedule());
+                        context.read<SholatScheduleBloc>().add(
+                          const FetchSholatSchedule(),
+                        );
                       },
                       child: const Text('Retry'),
                     ),
@@ -59,36 +79,90 @@ class SholatView extends StatelessWidget {
               return CustomScrollView(
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 32.0,
+                    ),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        const Text(
+                        Text(
                           'Jadwal Sholat',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.white70,
+                            color: subTextColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           schedule.cityName,
-                          style: AppTypography.textTheme.headlineLarge?.copyWith(color: Colors.white, fontSize: 28),
+                          style: AppTypography.textTheme.headlineLarge
+                              ?.copyWith(color: textColor, fontSize: 28),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           schedule.date,
-                          style: AppTypography.textTheme.bodyLarge?.copyWith(color: Colors.white54),
+                          style: AppTypography.textTheme.bodyLarge?.copyWith(
+                            color: subTextColor,
+                          ),
                         ),
                         const SizedBox(height: 40),
-                        _buildTimeCard('Imsak', schedule.imsak, Icons.nights_stay_outlined),
-                        _buildTimeCard('Subuh', schedule.subuh, Icons.wb_twilight_outlined),
-                        _buildTimeCard('Terbit', schedule.terbit, Icons.brightness_5_outlined),
-                        _buildTimeCard('Dhuha', schedule.dhuha, Icons.brightness_high_outlined),
-                        _buildTimeCard('Dzuhur', schedule.dzuhur, Icons.wb_sunny_outlined),
-                        _buildTimeCard('Ashar', schedule.ashar, Icons.auto_awesome_outlined),
-                        _buildTimeCard('Maghrib', schedule.maghrib, Icons.brightness_6_outlined),
-                        _buildTimeCard('Isya', schedule.isya, Icons.dark_mode_outlined),
+                        _buildTimeCard(
+                          'Imsak',
+                          schedule.imsak,
+                          Icons.nights_stay_outlined,
+                          cardBg,
+                          textColor,
+                        ),
+                        _buildTimeCard(
+                          'Subuh',
+                          schedule.subuh,
+                          Icons.wb_twilight_outlined,
+                          cardBg,
+                          textColor,
+                        ),
+                        _buildTimeCard(
+                          'Terbit',
+                          schedule.terbit,
+                          Icons.brightness_5_outlined,
+                          cardBg,
+                          textColor,
+                        ),
+                        _buildTimeCard(
+                          'Dhuha',
+                          schedule.dhuha,
+                          Icons.brightness_high_outlined,
+                          cardBg,
+                          textColor,
+                        ),
+                        _buildTimeCard(
+                          'Dzuhur',
+                          schedule.dzuhur,
+                          Icons.wb_sunny_outlined,
+                          cardBg,
+                          textColor,
+                        ),
+                        _buildTimeCard(
+                          'Ashar',
+                          schedule.ashar,
+                          Icons.auto_awesome_outlined,
+                          cardBg,
+                          textColor,
+                        ),
+                        _buildTimeCard(
+                          'Maghrib',
+                          schedule.maghrib,
+                          Icons.brightness_6_outlined,
+                          cardBg,
+                          textColor,
+                        ),
+                        _buildTimeCard(
+                          'Isya',
+                          schedule.isya,
+                          Icons.dark_mode_outlined,
+                          cardBg,
+                          textColor,
+                        ),
                       ]),
                     ),
                   ),
@@ -102,14 +176,20 @@ class SholatView extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeCard(String label, String time, IconData icon) {
+  Widget _buildTimeCard(
+    String label,
+    String time,
+    IconData icon,
+    Color cardBg,
+    Color textColor,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: cardBg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: textColor.withValues(alpha: 0.05)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,7 +201,7 @@ class SholatView extends StatelessWidget {
               Text(
                 label,
                 style: AppTypography.textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
+                  color: textColor,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -129,7 +209,9 @@ class SholatView extends StatelessWidget {
           ),
           Text(
             time,
-            style: AppTypography.textTheme.headlineSmall?.copyWith(color: Colors.white),
+            style: AppTypography.textTheme.headlineSmall?.copyWith(
+              color: textColor,
+            ),
           ),
         ],
       ),

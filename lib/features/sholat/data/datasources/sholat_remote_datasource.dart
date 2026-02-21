@@ -20,7 +20,9 @@ class SholatRemoteDataSourceImpl implements SholatRemoteDataSource {
     try {
       final response = await apiClient.get('/sholat/kabkota/semua');
       final data = response.data['data'] as List<dynamic>;
-      return data.map((json) => CityModel.fromJson(json as Map<String, dynamic>)).toList();
+      return data
+          .map((json) => CityModel.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw ServerException('Failed to fetch cities: $e');
     }
@@ -31,7 +33,9 @@ class SholatRemoteDataSourceImpl implements SholatRemoteDataSource {
     try {
       final response = await apiClient.get('/sholat/kabkota/cari/$keyword');
       final data = response.data['data'] as List<dynamic>;
-      return data.map((json) => CityModel.fromJson(json as Map<String, dynamic>)).toList();
+      return data
+          .map((json) => CityModel.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw ServerException('Failed to search cities: $e');
     }

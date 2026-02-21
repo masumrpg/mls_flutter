@@ -142,7 +142,7 @@ class AppDrawer extends StatelessWidget {
                         trailing: Switch(
                           value: themeMode == ThemeMode.dark,
                           onChanged: (_) => context.read<ThemeCubit>().toggleTheme(),
-                          activeColor: accentColor,
+                          activeThumbColor: accentColor,
                         ),
                       );
                     },

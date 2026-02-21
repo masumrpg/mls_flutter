@@ -20,6 +20,17 @@ class SholatPage extends StatefulWidget {
 }
 
 class _SholatPageState extends State<SholatPage> {
+  Color get _bgColor => Theme.of(context).scaffoldBackgroundColor;
+  Color get _textColor => Theme.of(context).brightness == Brightness.dark
+      ? AppColors.darkText
+      : AppColors.black;
+  Color get _subTextColor => Theme.of(context).brightness == Brightness.dark
+      ? AppColors.darkTextSecondary
+      : AppColors.grey;
+  Color get _cardBg => Theme.of(context).brightness == Brightness.dark
+      ? AppColors.darkSurface
+      : AppColors.white;
+
   final Map<String, dynamic> _notificationSettings = {};
   Timer? _timer;
   DateTime _now = DateTime.now();
@@ -52,7 +63,7 @@ class _SholatPageState extends State<SholatPage> {
     return BlocProvider(
       create: (context) => sl<SholatScheduleBloc>()..add(FetchSholatSchedule()),
       child: Scaffold(
-        backgroundColor: AppColors.darkBackground,
+        backgroundColor: _bgColor,
         body: BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
           builder: (context, state) {
             if (state is SholatScheduleLoading) {
@@ -86,10 +97,7 @@ class _SholatPageState extends State<SholatPage> {
     });
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    SholatScheduleEntity schedule,
-  ) {
+  Widget _buildBody(BuildContext context, SholatScheduleEntity schedule) {
     final nextPrayer = _getNextPrayer(schedule);
 
     return SingleChildScrollView(
@@ -107,7 +115,7 @@ class _SholatPageState extends State<SholatPage> {
             child: Text(
               "TODAY'S SCHEDULE",
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: _textColor.withValues(alpha: 0.6),
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
@@ -134,7 +142,7 @@ class _SholatPageState extends State<SholatPage> {
               IconButton(
                 padding: EdgeInsets.zero,
                 alignment: Alignment.topLeft,
-                icon: const Icon(Icons.menu, color: Colors.white, size: 28),
+                icon: Icon(Icons.menu, color: _textColor, size: 28),
                 onPressed: () => Scaffold.of(context).openDrawer(),
               ),
               const SizedBox(width: 8),
@@ -144,16 +152,16 @@ class _SholatPageState extends State<SholatPage> {
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.location_on,
-                          color: Color(0xFF2DD4BF),
+                          color: AppColors.primary,
                           size: 16,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           'LOCATION',
                           style: TextStyle(
-                            color: const Color(0xFF2DD4BF),
+                            color: AppColors.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
@@ -168,16 +176,13 @@ class _SholatPageState extends State<SholatPage> {
                           schedule.cityName.isEmpty
                               ? 'Unknown City'
                               : schedule.cityName,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: _textColor,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.white,
-                        ),
+                        Icon(Icons.keyboard_arrow_down, color: _textColor),
                       ],
                     ),
                   ],
@@ -197,11 +202,11 @@ class _SholatPageState extends State<SholatPage> {
             children: [
               Text(
                 '${HijriCalendar.fromDate(_now).hDay} ${HijriCalendar.fromDate(_now).longMonthName} ${HijriCalendar.fromDate(_now).hYear} H',
-                style: const TextStyle(color: Colors.grey, fontSize: 14),
+                style: TextStyle(color: _subTextColor, fontSize: 14),
               ),
               Text(
                 DateFormat('EEEE, d MMM yyyy').format(_now),
-                style: const TextStyle(color: Colors.grey, fontSize: 14),
+                style: TextStyle(color: _subTextColor, fontSize: 14),
               ),
             ],
           ),
@@ -237,15 +242,12 @@ class _SholatPageState extends State<SholatPage> {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       height: 320,
       decoration: BoxDecoration(
-        color: AppColors.darkBackground,
+        color: _bgColor,
         borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.darkBackground,
-            AppColors.darkBackground.withValues(alpha: 0.8),
-          ],
+          colors: [_bgColor, _bgColor.withValues(alpha: 0.8)],
         ),
       ),
       child: Stack(
@@ -258,7 +260,7 @@ class _SholatPageState extends State<SholatPage> {
               opacity: 0.05,
               child: CustomPaint(
                 size: const Size(200, 150),
-                painter: MosqueSilhouettePainter(),
+                painter: MosqueSilhouettePainter(_textColor),
               ),
             ),
           ),
@@ -269,7 +271,7 @@ class _SholatPageState extends State<SholatPage> {
                 Text(
                   'NEXT PRAYER',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: _textColor.withValues(alpha: 0.5),
                     fontSize: 12,
                     letterSpacing: 2,
                     fontWeight: FontWeight.bold,
@@ -285,7 +287,7 @@ class _SholatPageState extends State<SholatPage> {
                       child: CircularProgressIndicator(
                         value: 1.0,
                         strokeWidth: 8,
-                        color: Colors.white.withOpacity(0.1),
+                        color: _cardBg,
                       ),
                     ),
                     SizedBox(
@@ -294,7 +296,7 @@ class _SholatPageState extends State<SholatPage> {
                       child: CircularProgressIndicator(
                         value: progress,
                         strokeWidth: 8,
-                        color: Colors.white,
+                        color: _textColor,
                         strokeCap: StrokeCap.round,
                       ),
                     ),
@@ -303,16 +305,16 @@ class _SholatPageState extends State<SholatPage> {
                       children: [
                         Text(
                           nextPrayer.name.toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: _textColor,
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           nextPrayer.timeString,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: _textColor,
                             fontSize: 24,
                             fontWeight: FontWeight.w500,
                           ),
@@ -329,22 +331,18 @@ class _SholatPageState extends State<SholatPage> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: _textColor.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.access_time,
-                        color: Colors.white,
-                        size: 14,
-                      ),
+                      Icon(Icons.access_time, color: _textColor, size: 14),
                       const SizedBox(width: 8),
                       Text(
                         '-${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')} remaining',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: _textColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -461,11 +459,11 @@ class _SholatPageState extends State<SholatPage> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: _cardBg,
         borderRadius: BorderRadius.circular(20),
         border: isNext
             ? Border.all(
-                color: const Color(0xFF2DD4BF).withOpacity(0.5),
+                color: AppColors.primary.withValues(alpha: 0.5),
                 width: 2,
               )
             : null,
@@ -476,15 +474,13 @@ class _SholatPageState extends State<SholatPage> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: isNext
-                  ? const Color(0xFF2DD4BF)
-                  : Colors.white.withOpacity(0.1),
+                  ? AppColors.primary
+                  : _textColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
-              color: isNext
-                  ? AppColors.darkBackground
-                  : Colors.white.withOpacity(0.8),
+              color: isNext ? _bgColor : _textColor.withValues(alpha: 0.8),
               size: 20,
             ),
           ),
@@ -496,7 +492,7 @@ class _SholatPageState extends State<SholatPage> {
                 Text(
                   name,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(isPassed ? 0.4 : 1.0),
+                    color: _textColor.withValues(alpha: isPassed ? 0.4 : 1.0),
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -504,7 +500,7 @@ class _SholatPageState extends State<SholatPage> {
                 Text(
                   time,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(isPassed ? 0.3 : 0.6),
+                    color: _textColor.withValues(alpha: isPassed ? 0.3 : 0.6),
                     fontSize: 14,
                   ),
                 ),
@@ -515,20 +511,20 @@ class _SholatPageState extends State<SholatPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: _cardBg,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text(
                 'NEXT',
                 style: TextStyle(
-                  color: Color(0xFF2DD4BF),
+                  color: AppColors.primary,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             )
           else if (isPassed)
-            const Icon(Icons.check_circle, color: Color(0xFF2DD4BF), size: 20)
+            Icon(Icons.check_circle, color: AppColors.primary, size: 20)
           else
             InkWell(
               onTap: () => _openSettings(
@@ -540,7 +536,7 @@ class _SholatPageState extends State<SholatPage> {
               ),
               child: Icon(
                 bellIcon,
-                color: Colors.white.withOpacity(0.3),
+                color: _textColor.withValues(alpha: 0.3),
                 size: 20,
               ),
             ),
@@ -660,10 +656,13 @@ class _PrayerTime {
 }
 
 class MosqueSilhouettePainter extends CustomPainter {
+  final Color color;
+  MosqueSilhouettePainter(this.color);
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white
+      ..color = color
       ..style = PaintingStyle.fill;
 
     final path = Path();

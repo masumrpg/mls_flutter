@@ -7,7 +7,10 @@ abstract class SholatRepository {
   Future<Either<Failure, List<CityEntity>>> getCities();
   Future<Either<Failure, List<CityEntity>>> searchCities(String keyword);
   Future<Either<Failure, SholatScheduleEntity>> getScheduleToday(String cityId);
-  Future<Either<Failure, SholatScheduleEntity>> getSchedule(String cityId, String date);
+  Future<Either<Failure, SholatScheduleEntity>> getSchedule(
+    String cityId,
+    String date,
+  );
   Future<Either<Failure, SholatScheduleEntity>> getScheduleForCurrentLocation();
   Future<Either<Failure, void>> saveNotificationSetting(
     String prayerName,

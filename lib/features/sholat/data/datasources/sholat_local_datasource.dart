@@ -6,7 +6,11 @@ import 'package:drift/drift.dart';
 abstract class SholatLocalDataSource {
   Future<void> cacheSchedule(SholatScheduleModel schedule);
   Future<SholatScheduleModel?> getCachedSchedule(String cityId, String date);
-  Future<void> saveNotificationSetting(String prayerName, int alertType, int preReminderMinutes);
+  Future<void> saveNotificationSetting(
+    String prayerName,
+    int alertType,
+    int preReminderMinutes,
+  );
   Future<Map<String, dynamic>> getNotificationSettings();
 }
 
@@ -18,32 +22,38 @@ class SholatLocalDataSourceImpl implements SholatLocalDataSource {
   @override
   Future<void> cacheSchedule(SholatScheduleModel schedule) async {
     try {
-      await db.into(db.prayerSchedulesTable).insertOnConflictUpdate(
-        PrayerSchedulesTableCompanion(
-          id: Value('${schedule.cityId}_${schedule.date}'),
-          cityId: Value(schedule.cityId),
-          cityName: Value(schedule.cityName),
-          province: Value(schedule.province),
-          date: Value(schedule.date),
-          imsak: Value(schedule.imsak),
-          subuh: Value(schedule.subuh),
-          terbit: Value(schedule.terbit),
-          dhuha: Value(schedule.dhuha),
-          dzuhur: Value(schedule.dzuhur),
-          ashar: Value(schedule.ashar),
-          maghrib: Value(schedule.maghrib),
-          isya: Value(schedule.isya),
-        )
-      );
+      await db
+          .into(db.prayerSchedulesTable)
+          .insertOnConflictUpdate(
+            PrayerSchedulesTableCompanion(
+              id: Value('${schedule.cityId}_${schedule.date}'),
+              cityId: Value(schedule.cityId),
+              cityName: Value(schedule.cityName),
+              province: Value(schedule.province),
+              date: Value(schedule.date),
+              imsak: Value(schedule.imsak),
+              subuh: Value(schedule.subuh),
+              terbit: Value(schedule.terbit),
+              dhuha: Value(schedule.dhuha),
+              dzuhur: Value(schedule.dzuhur),
+              ashar: Value(schedule.ashar),
+              maghrib: Value(schedule.maghrib),
+              isya: Value(schedule.isya),
+            ),
+          );
     } catch (e) {
       throw CacheException('Failed to cache schedule: $e');
     }
   }
 
   @override
-  Future<SholatScheduleModel?> getCachedSchedule(String cityId, String date) async {
+  Future<SholatScheduleModel?> getCachedSchedule(
+    String cityId,
+    String date,
+  ) async {
     try {
-      final query = db.select(db.prayerSchedulesTable)..where((t) => t.id.equals('${cityId}_$date'));
+      final query = db.select(db.prayerSchedulesTable)
+        ..where((t) => t.id.equals('${cityId}_$date'));
       final result = await query.getSingleOrNull();
 
       if (result != null) {
@@ -69,15 +79,21 @@ class SholatLocalDataSourceImpl implements SholatLocalDataSource {
   }
 
   @override
-  Future<void> saveNotificationSetting(String prayerName, int alertType, int preReminderMinutes) async {
+  Future<void> saveNotificationSetting(
+    String prayerName,
+    int alertType,
+    int preReminderMinutes,
+  ) async {
     try {
-      await db.into(db.notificationSettingsTable).insertOnConflictUpdate(
-        NotificationSettingsTableCompanion(
-          prayerName: Value(prayerName),
-          alertType: Value(alertType),
-          preReminderMinutes: Value(preReminderMinutes),
-        ),
-      );
+      await db
+          .into(db.notificationSettingsTable)
+          .insertOnConflictUpdate(
+            NotificationSettingsTableCompanion(
+              prayerName: Value(prayerName),
+              alertType: Value(alertType),
+              preReminderMinutes: Value(preReminderMinutes),
+            ),
+          );
     } catch (e) {
       throw CacheException('Failed to save notification setting: $e');
     }

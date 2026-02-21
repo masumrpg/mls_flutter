@@ -1,10 +1,7 @@
 import '../../domain/entities/city_entity.dart';
 
 class CityModel extends CityEntity {
-  const CityModel({
-    required super.id,
-    required super.location,
-  });
+  const CityModel({required super.id, required super.location});
 
   factory CityModel.fromJson(Map<String, dynamic> json) {
     return CityModel(
@@ -14,9 +11,6 @@ class CityModel extends CityEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'lokasi': location,
-    };
+    return {'id': id, 'lokasi': location};
   }
 }

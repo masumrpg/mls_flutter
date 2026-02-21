@@ -31,17 +31,17 @@ class SholatScheduleEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        cityId,
-        cityName,
-        province,
-        date,
-        imsak,
-        subuh,
-        terbit,
-        dhuha,
-        dzuhur,
-        ashar,
-        maghrib,
-        isya,
-      ];
+    cityId,
+    cityName,
+    province,
+    date,
+    imsak,
+    subuh,
+    terbit,
+    dhuha,
+    dzuhur,
+    ashar,
+    maghrib,
+    isya,
+  ];
 }

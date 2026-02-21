@@ -7,10 +7,12 @@ import '../domain/repositories/sholat_repository.dart';
 part 'sholat_schedule_event.dart';
 part 'sholat_schedule_state.dart';
 
-class SholatScheduleBloc extends Bloc<SholatScheduleEvent, SholatScheduleState> {
+class SholatScheduleBloc
+    extends Bloc<SholatScheduleEvent, SholatScheduleState> {
   final SholatRepository repository;
 
-  SholatScheduleBloc({required this.repository}) : super(SholatScheduleInitial()) {
+  SholatScheduleBloc({required this.repository})
+    : super(SholatScheduleInitial()) {
     on<FetchSholatSchedule>(_onFetchSholatSchedule);
   }
 

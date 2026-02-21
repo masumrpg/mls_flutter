@@ -45,7 +45,9 @@ class SholatRepositoryImpl implements SholatRepository {
   }
 
   @override
-  Future<Either<Failure, SholatScheduleEntity>> getScheduleToday(String cityId) async {
+  Future<Either<Failure, SholatScheduleEntity>> getScheduleToday(
+    String cityId,
+  ) async {
     final todayStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
     return getSchedule(cityId, todayStr);
   }
