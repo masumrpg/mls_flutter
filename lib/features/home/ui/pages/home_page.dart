@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
 
   String _getGreeting() {
     final hour = _now.hour;
-    if (hour < 11) return "Sabahul Khair, Ahmad";
+    if (hour < 11) return 'Sabahul Khair, Ahmad';
     if (hour < 15) return "Naharun Sa'id, Ahmad";
     if (hour < 18) return "Masa'ul Khair, Ahmad";
     return "Lailatun Sa'idah, Ahmad";
@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
-    String countdownText = "Waiting tomorrow";
+    String countdownText = 'Waiting tomorrow';
     if (nextPrayer != null) {
       final remaining = nextPrayer.time.difference(_now);
       final hours = remaining.inHours;

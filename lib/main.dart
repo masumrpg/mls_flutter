@@ -12,13 +12,16 @@ import 'shared/blocs/app_bloc_observer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize mobile-only services
-  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-    // Initialize notifications
+  // Initialize services for native platforms
+  if (!kIsWeb) {
+    // Initialize notifications and request permissions
     await NotificationService.instance.initialize();
+    await NotificationService.instance.requestPermission();
 
-    // Initialize background fetch job
-    Workmanager().initialize(callbackDispatcher);
+    // Workmanager is typically for mobile only
+    if (Platform.isAndroid || Platform.isIOS) {
+      Workmanager().initialize(callbackDispatcher);
+    }
   }
 
   // Setup dependency injection
