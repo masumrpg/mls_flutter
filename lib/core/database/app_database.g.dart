@@ -2366,6 +2366,360 @@ class NotificationSettingsTableCompanion
   }
 }
 
+class $LocationCacheTableTable extends LocationCacheTable
+    with TableInfo<$LocationCacheTableTable, LocationCacheTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocationCacheTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cityNameMeta = const VerificationMeta(
+    'cityName',
+  );
+  @override
+  late final GeneratedColumn<String> cityName = GeneratedColumn<String>(
+    'city_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    latitude,
+    longitude,
+    cityName,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'location_cache_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocationCacheTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_latitudeMeta);
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_longitudeMeta);
+    }
+    if (data.containsKey('city_name')) {
+      context.handle(
+        _cityNameMeta,
+        cityName.isAcceptableOrUnknown(data['city_name']!, _cityNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cityNameMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocationCacheTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocationCacheTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      )!,
+      cityName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}city_name'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LocationCacheTableTable createAlias(String alias) {
+    return $LocationCacheTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocationCacheTableData extends DataClass
+    implements Insertable<LocationCacheTableData> {
+  final int id;
+  final double latitude;
+  final double longitude;
+  final String cityName;
+  final DateTime updatedAt;
+  const LocationCacheTableData({
+    required this.id,
+    required this.latitude,
+    required this.longitude,
+    required this.cityName,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['latitude'] = Variable<double>(latitude);
+    map['longitude'] = Variable<double>(longitude);
+    map['city_name'] = Variable<String>(cityName);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LocationCacheTableCompanion toCompanion(bool nullToAbsent) {
+    return LocationCacheTableCompanion(
+      id: Value(id),
+      latitude: Value(latitude),
+      longitude: Value(longitude),
+      cityName: Value(cityName),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LocationCacheTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocationCacheTableData(
+      id: serializer.fromJson<int>(json['id']),
+      latitude: serializer.fromJson<double>(json['latitude']),
+      longitude: serializer.fromJson<double>(json['longitude']),
+      cityName: serializer.fromJson<String>(json['cityName']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'latitude': serializer.toJson<double>(latitude),
+      'longitude': serializer.toJson<double>(longitude),
+      'cityName': serializer.toJson<String>(cityName),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LocationCacheTableData copyWith({
+    int? id,
+    double? latitude,
+    double? longitude,
+    String? cityName,
+    DateTime? updatedAt,
+  }) => LocationCacheTableData(
+    id: id ?? this.id,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    cityName: cityName ?? this.cityName,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LocationCacheTableData copyWithCompanion(LocationCacheTableCompanion data) {
+    return LocationCacheTableData(
+      id: data.id.present ? data.id.value : this.id,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      cityName: data.cityName.present ? data.cityName.value : this.cityName,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocationCacheTableData(')
+          ..write('id: $id, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('cityName: $cityName, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, latitude, longitude, cityName, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocationCacheTableData &&
+          other.id == this.id &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
+          other.cityName == this.cityName &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LocationCacheTableCompanion
+    extends UpdateCompanion<LocationCacheTableData> {
+  final Value<int> id;
+  final Value<double> latitude;
+  final Value<double> longitude;
+  final Value<String> cityName;
+  final Value<DateTime> updatedAt;
+  const LocationCacheTableCompanion({
+    this.id = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.cityName = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  LocationCacheTableCompanion.insert({
+    this.id = const Value.absent(),
+    required double latitude,
+    required double longitude,
+    required String cityName,
+    required DateTime updatedAt,
+  }) : latitude = Value(latitude),
+       longitude = Value(longitude),
+       cityName = Value(cityName),
+       updatedAt = Value(updatedAt);
+  static Insertable<LocationCacheTableData> custom({
+    Expression<int>? id,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
+    Expression<String>? cityName,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (cityName != null) 'city_name': cityName,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  LocationCacheTableCompanion copyWith({
+    Value<int>? id,
+    Value<double>? latitude,
+    Value<double>? longitude,
+    Value<String>? cityName,
+    Value<DateTime>? updatedAt,
+  }) {
+    return LocationCacheTableCompanion(
+      id: id ?? this.id,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      cityName: cityName ?? this.cityName,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
+    }
+    if (cityName.present) {
+      map['city_name'] = Variable<String>(cityName.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocationCacheTableCompanion(')
+          ..write('id: $id, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('cityName: $cityName, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2376,6 +2730,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $PrayerSchedulesTableTable(this);
   late final $NotificationSettingsTableTable notificationSettingsTable =
       $NotificationSettingsTableTable(this);
+  late final $LocationCacheTableTable locationCacheTable =
+      $LocationCacheTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2386,6 +2742,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     bookmarksTable,
     prayerSchedulesTable,
     notificationSettingsTable,
+    locationCacheTable,
   ];
 }
 
@@ -3643,6 +4000,213 @@ typedef $$NotificationSettingsTableTableProcessedTableManager =
       NotificationSettingsTableData,
       PrefetchHooks Function()
     >;
+typedef $$LocationCacheTableTableCreateCompanionBuilder =
+    LocationCacheTableCompanion Function({
+      Value<int> id,
+      required double latitude,
+      required double longitude,
+      required String cityName,
+      required DateTime updatedAt,
+    });
+typedef $$LocationCacheTableTableUpdateCompanionBuilder =
+    LocationCacheTableCompanion Function({
+      Value<int> id,
+      Value<double> latitude,
+      Value<double> longitude,
+      Value<String> cityName,
+      Value<DateTime> updatedAt,
+    });
+
+class $$LocationCacheTableTableFilterComposer
+    extends Composer<_$AppDatabase, $LocationCacheTableTable> {
+  $$LocationCacheTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cityName => $composableBuilder(
+    column: $table.cityName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocationCacheTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocationCacheTableTable> {
+  $$LocationCacheTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cityName => $composableBuilder(
+    column: $table.cityName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocationCacheTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocationCacheTableTable> {
+  $$LocationCacheTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<String> get cityName =>
+      $composableBuilder(column: $table.cityName, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$LocationCacheTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocationCacheTableTable,
+          LocationCacheTableData,
+          $$LocationCacheTableTableFilterComposer,
+          $$LocationCacheTableTableOrderingComposer,
+          $$LocationCacheTableTableAnnotationComposer,
+          $$LocationCacheTableTableCreateCompanionBuilder,
+          $$LocationCacheTableTableUpdateCompanionBuilder,
+          (
+            LocationCacheTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $LocationCacheTableTable,
+              LocationCacheTableData
+            >,
+          ),
+          LocationCacheTableData,
+          PrefetchHooks Function()
+        > {
+  $$LocationCacheTableTableTableManager(
+    _$AppDatabase db,
+    $LocationCacheTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocationCacheTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocationCacheTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocationCacheTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
+                Value<String> cityName = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LocationCacheTableCompanion(
+                id: id,
+                latitude: latitude,
+                longitude: longitude,
+                cityName: cityName,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required double latitude,
+                required double longitude,
+                required String cityName,
+                required DateTime updatedAt,
+              }) => LocationCacheTableCompanion.insert(
+                id: id,
+                latitude: latitude,
+                longitude: longitude,
+                cityName: cityName,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocationCacheTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocationCacheTableTable,
+      LocationCacheTableData,
+      $$LocationCacheTableTableFilterComposer,
+      $$LocationCacheTableTableOrderingComposer,
+      $$LocationCacheTableTableAnnotationComposer,
+      $$LocationCacheTableTableCreateCompanionBuilder,
+      $$LocationCacheTableTableUpdateCompanionBuilder,
+      (
+        LocationCacheTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $LocationCacheTableTable,
+          LocationCacheTableData
+        >,
+      ),
+      LocationCacheTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3660,4 +4224,6 @@ class $AppDatabaseManager {
         _db,
         _db.notificationSettingsTable,
       );
+  $$LocationCacheTableTableTableManager get locationCacheTable =>
+      $$LocationCacheTableTableTableManager(_db, _db.locationCacheTable);
 }

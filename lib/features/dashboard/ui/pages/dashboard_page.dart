@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/widgets/app_drawer.dart';
+import '../../../home/ui/pages/home_page.dart';
 import '../../../quran/ui/pages/quran_page.dart';
 import '../../../sholat/ui/pages/sholat_page.dart';
 import '../../../hadis/ui/pages/hadis_page.dart';
@@ -17,6 +18,7 @@ class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = const [
+    HomePage(),
     QuranPage(),
     SholatPage(),
     HadisPage(),
@@ -33,7 +35,7 @@ class _DashboardPageState extends State<DashboardPage> {
       drawer: AppDrawer(
         currentIndex: _currentIndex,
         onItemSelected: (index) {
-          if (index < 5) {
+          if (index < 6) {
             setState(() {
               _currentIndex = index;
             });
@@ -55,6 +57,11 @@ class _DashboardPageState extends State<DashboardPage> {
         backgroundColor: theme.navigationBarTheme.backgroundColor,
         indicatorColor: theme.navigationBarTheme.indicatorColor,
         destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Beranda',
+          ),
           NavigationDestination(
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book),

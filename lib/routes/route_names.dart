@@ -10,4 +10,5 @@ class RouteNames {
   static const String hadis = '/hadis';
   static const String kalender = '/kalender';
   static const String profil = '/profil';
+  static const String qibla = '/qibla';
 }

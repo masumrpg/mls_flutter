@@ -14,6 +14,7 @@ import '../features/sholat/ui/pages/sholat_page.dart';
 import '../features/hadis/ui/pages/hadis_page.dart';
 import '../features/kalender/ui/pages/kalender_page.dart';
 import '../features/profil/ui/pages/profil_page.dart';
+import '../features/qibla/ui/pages/qibla_page.dart';
 
 class AppRouter {
   static final _isDesktop =
@@ -90,7 +91,12 @@ class AppRouter {
         name: RouteNames.profil,
         builder: (context, state) => const ProfilPage(),
       ),
-    ],
+          GoRoute(
+        path: RouteNames.qibla,
+        name: RouteNames.qibla,
+        builder: (context, state) => const QiblaPage(),
+      ),
+],
 
     // Error handling
     errorBuilder: (context, state) => Scaffold(
