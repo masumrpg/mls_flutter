@@ -27,6 +27,10 @@ class ProfilPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+          leading: IconButton(
+            icon: const Icon(Icons.menu, color: AppColors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
           backgroundColor: AppColors.primary,
           elevation: 0,
         ),

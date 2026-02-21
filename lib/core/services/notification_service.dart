@@ -57,6 +57,7 @@ class NotificationService {
     required String body,
     required DateTime scheduledTime,
     bool playSound = true,
+    String? sound,
   }) async {
     if (scheduledTime.isBefore(DateTime.now())) return;
 
@@ -70,9 +71,13 @@ class NotificationService {
         importance: Importance.max,
         priority: Priority.high,
         playSound: playSound,
+        sound: sound != null
+            ? RawResourceAndroidNotificationSound(sound)
+            : null,
       ),
       iOS: DarwinNotificationDetails(
         presentSound: playSound,
+        sound: sound != null ? '$sound.mp3' : null,
       ),
       linux: const LinuxNotificationDetails(),
     );

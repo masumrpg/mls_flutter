@@ -8,6 +8,10 @@ class HadisPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hadis'),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
       ),
       body: const SafeArea(
         child: Center(

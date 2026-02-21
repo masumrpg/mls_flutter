@@ -1,11 +1,16 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../domain/entities/sholat_schedule_entity.dart';
+import '../../domain/repositories/sholat_repository.dart';
 import '../../bloc/sholat_schedule_bloc.dart';
 import '../widgets/prayer_notification_bottom_sheet.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../../../shared/widgets/error_view.dart';
+import 'package:hijri/hijri_calendar.dart';
 
 class SholatPage extends StatefulWidget {
   const SholatPage({super.key});
@@ -15,19 +20,39 @@ class SholatPage extends StatefulWidget {
 }
 
 class _SholatPageState extends State<SholatPage> {
-  // We manage the DB writes locally in the UI to keep it simple,
-  // since the notification settings aren't strictly part of the API.
   final Map<String, dynamic> _notificationSettings = {};
+  Timer? _timer;
+  DateTime _now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+    _loadSettings();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          _now = DateTime.now();
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return BlocProvider(
       create: (context) => sl<SholatScheduleBloc>()..add(FetchSholatSchedule()),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Jadwal Sholat'), elevation: 0),
+        backgroundColor: AppColors.darkBackground,
         body: BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
           builder: (context, state) {
             if (state is SholatScheduleLoading) {
@@ -40,7 +65,7 @@ class _SholatPageState extends State<SholatPage> {
                 },
               );
             } else if (state is SholatScheduleLoaded) {
-              return _buildSchedule(context, state.schedule, theme);
+              return _buildBody(context, state.schedule);
             }
             return const SizedBox();
           },
@@ -49,142 +74,503 @@ class _SholatPageState extends State<SholatPage> {
     );
   }
 
-  Widget _buildSchedule(
+  Future<void> _loadSettings() async {
+    final result = await sl<SholatRepository>().getNotificationSettings();
+    result.fold((failure) => null, (settings) {
+      if (mounted) {
+        setState(() {
+          _notificationSettings.clear();
+          _notificationSettings.addAll(settings);
+        });
+      }
+    });
+  }
+
+  Widget _buildBody(
     BuildContext context,
     SholatScheduleEntity schedule,
-    ThemeData theme,
   ) {
+    final nextPrayer = _getNextPrayer(schedule);
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      physics: const BouncingScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.secondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          const SizedBox(height: 60), // Add top spacing for full screen
+          _buildHeader(schedule),
+          const SizedBox(height: 16),
+          _buildHeroCard(nextPrayer, schedule),
+          const SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Text(
+              "TODAY'S SCHEDULE",
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.6),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
               ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        schedule.cityName.isEmpty
-                            ? 'Unknown City'
-                            : schedule.cityName,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const Icon(
-                      Icons.location_on,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  schedule.date,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
             ),
           ),
-          const SizedBox(height: 24),
-          Text(
-            'Hari Ini',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildPrayerRow('Imsak', schedule.imsak, context),
-          _buildPrayerRow('Subuh', schedule.subuh, context),
-          _buildPrayerRow('Terbit', schedule.terbit, context),
-          _buildPrayerRow('Dhuha', schedule.dhuha, context),
-          _buildPrayerRow('Dzuhur', schedule.dzuhur, context),
-          _buildPrayerRow('Ashar', schedule.ashar, context),
-          _buildPrayerRow('Maghrib', schedule.maghrib, context),
-          _buildPrayerRow('Isya', schedule.isya, context),
+          const SizedBox(height: 16),
+          _buildPrayerList(schedule, nextPrayer?.name),
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildPrayerRow(String name, String time, BuildContext context) {
-    // Default settings if none found
+  Widget _buildHeader(SholatScheduleEntity schedule) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
+                padding: EdgeInsets.zero,
+                alignment: Alignment.topLeft,
+                icon: const Icon(Icons.menu, color: Colors.white, size: 28),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          color: Color(0xFF2DD4BF),
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'LOCATION',
+                          style: TextStyle(
+                            color: const Color(0xFF2DD4BF),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          schedule.cityName.isEmpty
+                              ? 'Unknown City'
+                              : schedule.cityName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?u=ahmad',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${HijriCalendar.fromDate(_now).hDay} ${HijriCalendar.fromDate(_now).longMonthName} ${HijriCalendar.fromDate(_now).hYear} H',
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+              Text(
+                DateFormat('EEEE, d MMM yyyy').format(_now),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroCard(
+    _PrayerTime? nextPrayer,
+    SholatScheduleEntity schedule,
+  ) {
+    if (nextPrayer == null) return const SizedBox();
+
+    final remaining = nextPrayer.time.difference(_now);
+    final hours = remaining.inHours;
+    final minutes = remaining.inMinutes % 60;
+    final seconds = remaining.inSeconds % 60;
+
+    double progress = 0.5;
+    try {
+      final prev = _getPreviousPrayer(schedule);
+      if (prev != null) {
+        final total = nextPrayer.time.difference(prev.time).inSeconds;
+        final elapsed = _now.difference(prev.time).inSeconds;
+        progress = (total > 0 ? (elapsed / total) : 0.5).clamp(0.0, 1.0);
+      }
+    } catch (_) {
+      progress = 0.5;
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      height: 320,
+      decoration: BoxDecoration(
+        color: AppColors.darkBackground,
+        borderRadius: BorderRadius.circular(32),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.darkBackground,
+            AppColors.darkBackground.withValues(alpha: 0.8),
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Mosque Silhouette
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Opacity(
+              opacity: 0.05,
+              child: CustomPaint(
+                size: const Size(200, 150),
+                painter: MosqueSilhouettePainter(),
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'NEXT PRAYER',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.5),
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 180,
+                      height: 180,
+                      child: CircularProgressIndicator(
+                        value: 1.0,
+                        strokeWidth: 8,
+                        color: Colors.white.withOpacity(0.1),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 180,
+                      height: 180,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 8,
+                        color: Colors.white,
+                        strokeCap: StrokeCap.round,
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          nextPrayer.name.toUpperCase(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          nextPrayer.timeString,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                // Remaining Pill
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '-${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')} remaining',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _PrayerTime? _getPreviousPrayer(SholatScheduleEntity schedule) {
+    final format = DateFormat('HH:mm');
+    final nowTime = DateFormat('HH:mm').format(_now);
+
+    final prayers = [
+      _PrayerTime('Imsak', schedule.imsak, _now),
+      _PrayerTime('Subuh', schedule.subuh, _now),
+      _PrayerTime('Dhuha', schedule.dhuha, _now),
+      _PrayerTime('Dzuhur', schedule.dzuhur, _now),
+      _PrayerTime('Ashar', schedule.ashar, _now),
+      _PrayerTime('Maghrib', schedule.maghrib, _now),
+      _PrayerTime('Isya', schedule.isya, _now),
+    ];
+
+    _PrayerTime? last;
+    for (var p in prayers) {
+      if (format.parse(p.timeString).isBefore(format.parse(nowTime)) ||
+          format.parse(p.timeString).isAtSameMomentAs(format.parse(nowTime))) {
+        last = p;
+      }
+    }
+    return last;
+  }
+
+  Widget _buildPrayerList(
+    SholatScheduleEntity schedule,
+    String? nextPrayerName,
+  ) {
+    final prayers = [
+      {
+        'name': 'Imsak',
+        'time': schedule.imsak,
+        'icon': Icons.light_mode_outlined,
+      },
+      {'name': 'Subuh', 'time': schedule.subuh, 'icon': Icons.light_mode},
+      {
+        'name': 'Dhuha',
+        'time': schedule.dhuha,
+        'icon': Icons.wb_sunny_outlined,
+      },
+      {'name': 'Dzuhur', 'time': schedule.dzuhur, 'icon': Icons.wb_sunny},
+      {
+        'name': 'Ashar',
+        'time': schedule.ashar,
+        'icon': Icons.wb_cloudy_outlined,
+      },
+      {
+        'name': 'Maghrib',
+        'time': schedule.maghrib,
+        'icon': Icons.nightlight_round,
+      },
+      {'name': 'Isya', 'time': schedule.isya, 'icon': Icons.dark_mode},
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        children: prayers.map((p) {
+          final isNext = p['name'] == nextPrayerName;
+          final time = p['time'] as String;
+          final name = p['name'] as String;
+          final icon = p['icon'] as IconData;
+
+          // Determine status
+          final format = DateFormat('HH:mm');
+          final nowTimeStr = DateFormat('HH:mm').format(_now);
+          final isPassed = format
+              .parse(time)
+              .isBefore(format.parse(nowTimeStr));
+
+          return _buildPrayerCard(name, time, icon, isNext, isPassed);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildPrayerCard(
+    String name,
+    String time,
+    IconData icon,
+    bool isNext,
+    bool isPassed,
+  ) {
     final setting =
         _notificationSettings[name] ??
-        {'alertType': 2, 'preReminderMinutes': 10};
+        {'alertType': 0, 'preReminderMinutes': 0};
     final alertType = setting['alertType'] as int;
 
     IconData bellIcon;
-    Color bellColor = AppColors.primary;
     if (alertType == 0) {
       bellIcon = Icons.notifications_off_outlined;
-      bellColor = Colors.grey;
     } else if (alertType == 1) {
       bellIcon = Icons.notifications_active_outlined;
     } else {
       bellIcon = Icons.volume_up_rounded;
     }
 
-    final theme = Theme.of(context);
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.5)),
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: isNext
+            ? Border.all(
+                color: const Color(0xFF2DD4BF).withOpacity(0.5),
+                width: 2,
+              )
+            : null,
       ),
       child: Row(
         children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isNext
+                  ? const Color(0xFF2DD4BF)
+                  : Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: isNext
+                  ? AppColors.darkBackground
+                  : Colors.white.withOpacity(0.8),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 16),
           Expanded(
-            child: Text(
-              name,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(isPassed ? 0.4 : 1.0),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  time,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(isPassed ? 0.3 : 0.6),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isNext)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
-            ),
-          ),
-          Text(
-            time,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: Icon(bellIcon, color: bellColor),
-            onPressed: () {
-              _openSettings(
+              child: const Text(
+                'NEXT',
+                style: TextStyle(
+                  color: Color(0xFF2DD4BF),
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          else if (isPassed)
+            const Icon(Icons.check_circle, color: Color(0xFF2DD4BF), size: 20)
+          else
+            InkWell(
+              onTap: () => _openSettings(
                 context,
                 name,
                 alertType,
                 setting['preReminderMinutes'] as int,
-              );
-            },
-          ),
+                time,
+              ),
+              child: Icon(
+                bellIcon,
+                color: Colors.white.withOpacity(0.3),
+                size: 20,
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  _PrayerTime? _getNextPrayer(SholatScheduleEntity schedule) {
+    final format = DateFormat('HH:mm');
+    final nowTime = DateFormat('HH:mm').format(_now);
+
+    final prayers = [
+      _PrayerTime('Imsak', schedule.imsak, _now),
+      _PrayerTime('Subuh', schedule.subuh, _now),
+      _PrayerTime('Dhuha', schedule.dhuha, _now),
+      _PrayerTime('Dzuhur', schedule.dzuhur, _now),
+      _PrayerTime('Ashar', schedule.ashar, _now),
+      _PrayerTime('Maghrib', schedule.maghrib, _now),
+      _PrayerTime('Isya', schedule.isya, _now),
+    ];
+
+    for (var p in prayers) {
+      if (format.parse(p.timeString).isAfter(format.parse(nowTime))) {
+        return p;
+      }
+    }
+
+    // If all prayers passed, next is tomorrow's Imsak
+    return null;
   }
 
   void _openSettings(
@@ -192,6 +578,7 @@ class _SholatPageState extends State<SholatPage> {
     String name,
     int currentAlert,
     int currentPreReminder,
+    String prayerTimeStr,
   ) {
     showModalBottomSheet(
       context: context,
@@ -202,18 +589,112 @@ class _SholatPageState extends State<SholatPage> {
           prayerName: name,
           initialAlertType: currentAlert,
           initialPreReminder: currentPreReminder,
-          onSave: (alertType, preReminder) {
+          onSave: (alertType, preReminder) async {
             setState(() {
               _notificationSettings[name] = {
                 'alertType': alertType,
                 'preReminderMinutes': preReminder,
               };
             });
-            // Ideally we'd map this up to the Bloc/Repository to save to drift.
-            // For now, it updates local state perfectly.
+
+            // Save to DB
+            await sl<SholatRepository>().saveNotificationSetting(
+              name,
+              alertType,
+              preReminder,
+            );
+
+            // Schedule Notification
+            if (alertType > 0) {
+              final parts = prayerTimeStr.split(':');
+              var scheduled = DateTime(
+                _now.year,
+                _now.month,
+                _now.day,
+                int.parse(parts[0]),
+                int.parse(parts[1]),
+              );
+
+              // Apply pre-reminder
+              scheduled = scheduled.subtract(Duration(minutes: preReminder));
+
+              if (scheduled.isAfter(DateTime.now())) {
+                await NotificationService.instance.schedulePrayerNotification(
+                  id: name.hashCode,
+                  title: 'Waktu $name',
+                  body: preReminder > 0
+                      ? '$preReminder menit lagi waktu $name'
+                      : 'Sekarang sudah memasuki waktu $name',
+                  scheduledTime: scheduled,
+                  playSound: true,
+                  sound: alertType == 2 ? 'adzan_mecca' : null,
+                );
+              }
+            } else {
+              await NotificationService.instance.cancel(name.hashCode);
+            }
           },
         );
       },
     );
   }
+}
+
+class _PrayerTime {
+  final String name;
+  final String timeString;
+  final DateTime date;
+
+  _PrayerTime(this.name, this.timeString, this.date);
+
+  DateTime get time {
+    final parts = timeString.split(':');
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+  }
+}
+
+class MosqueSilhouettePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(0, size.height);
+
+    // Simple mosque shape
+    path.lineTo(size.width * 0.2, size.height);
+    path.lineTo(size.width * 0.2, size.height * 0.6);
+    path.quadraticBezierTo(
+      size.width * 0.3,
+      size.height * 0.4,
+      size.width * 0.4,
+      size.height * 0.6,
+    );
+    path.lineTo(size.width * 0.4, size.height);
+
+    path.lineTo(size.width * 0.6, size.height);
+    path.lineTo(size.width * 0.6, size.height * 0.4);
+    path.quadraticBezierTo(
+      size.width * 0.75,
+      size.height * 0.2,
+      size.width * 0.9,
+      size.height * 0.4,
+    );
+    path.lineTo(size.width * 0.9, size.height);
+    path.lineTo(size.width, size.height);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
