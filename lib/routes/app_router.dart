@@ -62,7 +62,10 @@ class AppRouter {
             name: 'surah_detail',
             builder: (context, state) {
               final id = int.tryParse(state.pathParameters['id'] ?? '1') ?? 1;
-              return QuranSurahDetailPage(surahNumber: id);
+              final ayah = int.tryParse(
+                state.uri.queryParameters['ayah'] ?? '',
+              );
+              return QuranSurahDetailPage(surahNumber: id, initialAyah: ayah);
             },
           ),
         ],

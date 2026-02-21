@@ -26,3 +26,11 @@ class AyahsTable extends Table {
   @override
   Set<Column> get primaryKey => {id};
 }
+
+class BookmarksTable extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get surahNumber => integer()();
+  IntColumn get ayahNumber => integer()();
+  TextColumn get surahName => text()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}

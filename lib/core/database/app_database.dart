@@ -4,14 +4,14 @@ import '../../features/quran/data/datasources/quran_tables.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [SurahsTable, AyahsTable])
+@DriftDatabase(tables: [SurahsTable, AyahsTable, BookmarksTable])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._() : super(_openConnection());
 
   static final AppDatabase instance = AppDatabase._();
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -22,6 +22,9 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         await m.createTable(surahsTable);
         await m.createTable(ayahsTable);
+      }
+      if (from < 3) {
+        await m.createTable(bookmarksTable);
       }
     },
   );

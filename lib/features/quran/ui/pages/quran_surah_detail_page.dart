@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../bloc/surah_detail_bloc.dart';
-import '../../bloc/audio_player_cubit.dart';
+import '../../cubit/audio_player_cubit.dart';
+import '../../cubit/bookmark_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
@@ -10,10 +11,12 @@ import '../../domain/entities/surah_detail_entity.dart';
 
 class QuranSurahDetailPage extends StatefulWidget {
   final int surahNumber;
+  final int? initialAyah;
 
   const QuranSurahDetailPage({
     super.key,
     required this.surahNumber,
+    this.initialAyah,
   });
 
   @override
@@ -23,6 +26,7 @@ class QuranSurahDetailPage extends StatefulWidget {
 class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
   final ScrollController _scrollController = ScrollController();
   final Map<int, GlobalKey> _ayahKeys = {};
+  bool _hasScrolledToInitial = false;
 
   @override
   void dispose() {
@@ -172,7 +176,7 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
                     listener: (context, audioState) {
                       _scrollToAyah(audioState.activeAyahNumber!);
                     },
-                    child: ListView.builder(
+                    child: SingleChildScrollView(
                       controller: _scrollController,
                       padding: const EdgeInsets.only(
                         left: 16,
@@ -180,21 +184,36 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
                         top: 16,
                         bottom: 80,
                       ),
-                      itemCount: surah.ayahs.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          return _buildSurahHeader(context, surah);
-                        }
-                        final ayah = surah.ayahs[index - 1];
-                        return _buildAyahCard(
-                          context,
-                          surah.nameLatin,
-                          ayah,
-                          textColor,
-                          subTextColor,
-                          cardBg,
-                        );
-                      },
+                      child: Column(
+                        children: [
+                          _buildSurahHeader(context, surah),
+                          ...surah.ayahs.map((ayah) {
+                            // If we just loaded and this is the initialAyah, post a frame callback to scroll
+                            if (widget.initialAyah != null &&
+                                ayah.ayahNumber == widget.initialAyah &&
+                                !_hasScrolledToInitial) {
+                              _hasScrolledToInitial = true;
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                Future.delayed(
+                                  const Duration(milliseconds: 300),
+                                  () {
+                                    _scrollToAyah(widget.initialAyah!);
+                                  },
+                                );
+                              });
+                            }
+
+                            return _buildAyahCard(
+                              context,
+                              surah.nameLatin,
+                              ayah,
+                              textColor,
+                              subTextColor,
+                              cardBg,
+                            );
+                          }),
+                        ],
+                      ),
                     ),
                   ),
                   // Audio player bar overlay at bottom
@@ -586,17 +605,40 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
                     ),
                   ),
                   const Spacer(),
-                  IconButton(
-                    icon: Icon(
-                      Icons.bookmark_border,
-                      color: isGrayed
-                          ? subTextColor.withValues(alpha: 0.2)
-                          : subTextColor,
-                      size: 20,
-                    ),
-                    onPressed: () {},
-                    constraints: const BoxConstraints(),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  BlocBuilder<BookmarkCubit, BookmarkState>(
+                    builder: (context, bmState) {
+                      final isBookmarked =
+                          bmState.surahNumber == ayah.surahNumber &&
+                          bmState.ayahNumber == ayah.ayahNumber;
+                      return IconButton(
+                        icon: Icon(
+                          isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                          color: isBookmarked
+                              ? AppColors.secondary
+                              : isGrayed
+                              ? subTextColor.withValues(alpha: 0.2)
+                              : subTextColor,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          context.read<BookmarkCubit>().saveBookmark(
+                            surahNumber: ayah.surahNumber,
+                            ayahNumber: ayah.ayahNumber,
+                            surahName: surahName,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '🔖 Bookmark: $surahName Ayat ${ayah.ayahNumber}',
+                              ),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        constraints: const BoxConstraints(),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      );
+                    },
                   ),
                   IconButton(
                     icon: Icon(

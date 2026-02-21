@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../bloc/quran_bloc.dart';
+import '../../cubit/bookmark_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
@@ -127,7 +128,11 @@ class QuranPage extends StatelessWidget {
                 child: CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(
-                      child: _buildGreetingAndLastRead(textColor, subTextColor),
+                      child: _buildGreetingAndLastRead(
+                        context,
+                        textColor,
+                        subTextColor,
+                      ),
                     ),
                     SliverToBoxAdapter(child: _buildTabBar(subTextColor)),
                     SliverList(
@@ -153,7 +158,11 @@ class QuranPage extends StatelessWidget {
     );
   }
 
-  Widget _buildGreetingAndLastRead(Color textColor, Color subTextColor) {
+  Widget _buildGreetingAndLastRead(
+    BuildContext context,
+    Color textColor,
+    Color subTextColor,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
@@ -174,106 +183,106 @@ class QuranPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primary,
-                  AppColors.primary.withValues(alpha: 0.7),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.menu_book,
-                      color: AppColors.white,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'LAST READ',
-                      style: AppTypography.textTheme.labelMedium?.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Al-Baqarah',
-                  style: AppTypography.textTheme.headlineSmall?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Ayah No: 255',
-                  style: AppTypography.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Progress',
-                      style: AppTypography.textTheme.bodySmall?.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.8),
-                      ),
-                    ),
-                    Text(
-                      '45%',
-                      style: AppTypography.textTheme.bodySmall?.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: 0.45,
-                    backgroundColor: AppColors.white.withValues(alpha: 0.2),
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppColors.secondary,
-                    ),
-                    minHeight: 6,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
+          BlocBuilder<BookmarkCubit, BookmarkState>(
+            builder: (context, bookmarkState) {
+              return GestureDetector(
+                onTap: bookmarkState.hasBookmark
+                    ? () => context.push(
+                        '/quran/detail/${bookmarkState.surahNumber}?ayah=${bookmarkState.ayahNumber}',
+                      )
+                    : null,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'Continue Reading',
-                    style: AppTypography.textTheme.labelLarge?.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w600,
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary,
+                        AppColors.primary.withValues(alpha: 0.7),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.bookmark,
+                            color: AppColors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'TERAKHIR DIBACA',
+                            style: AppTypography.textTheme.labelMedium
+                                ?.copyWith(
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.2,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      if (bookmarkState.hasBookmark) ...[
+                        Text(
+                          bookmarkState.surahName ?? '',
+                          style: AppTypography.textTheme.headlineSmall
+                              ?.copyWith(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Ayat ${bookmarkState.ayahNumber}',
+                          style: AppTypography.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.white.withValues(alpha: 0.8),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Lanjut Membaca →',
+                            style: AppTypography.textTheme.labelLarge?.copyWith(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ] else ...[
+                        Text(
+                          'Belum ada bookmark',
+                          style: AppTypography.textTheme.titleMedium?.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Tandai ayat yang sedang dibaca\ndengan menekan ikon bookmark 🔖',
+                          style: AppTypography.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.white.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
