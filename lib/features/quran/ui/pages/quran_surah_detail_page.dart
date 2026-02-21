@@ -7,6 +7,7 @@ import '../../cubit/bookmark_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../domain/entities/surah_detail_entity.dart';
 
 class QuranSurahDetailPage extends StatefulWidget {
@@ -24,24 +25,30 @@ class QuranSurahDetailPage extends StatefulWidget {
 }
 
 class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
-  final ScrollController _scrollController = ScrollController();
-  final Map<int, GlobalKey> _ayahKeys = {};
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
   bool _hasScrolledToInitial = false;
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
   }
 
-  void _scrollToAyah(int ayahNumber) {
-    final key = _ayahKeys[ayahNumber];
-    if (key?.currentContext != null) {
-      Scrollable.ensureVisible(
-        key!.currentContext!,
+  void _scrollToAyah(int ayahNumber, [List<dynamic>? ayahs]) {
+    if (_itemScrollController.isAttached) {
+      int index = ayahNumber;
+      if (ayahs != null) {
+        final ayahIndex = ayahs.indexWhere((a) => a.ayahNumber == ayahNumber);
+        if (ayahIndex != -1) {
+          index = ayahIndex + 1; // +1 because index 0 is Surah Header
+        }
+      }
+      _itemScrollController.scrollTo(
+        index: index,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
-        alignment: 0.3,
+        alignment: 0.1, // Aligns to the top
       );
     }
   }
@@ -160,9 +167,16 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
             } else if (state is SurahDetailLoaded) {
               final surah = state.surahDetail;
 
-              // Pre-create keys for all ayahs
-              for (final ayah in surah.ayahs) {
-                _ayahKeys.putIfAbsent(ayah.ayahNumber, () => GlobalKey());
+              // Handle initial auto-scroll when page loads
+              if (widget.initialAyah != null && !_hasScrolledToInitial) {
+                _hasScrolledToInitial = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (mounted) {
+                      _scrollToAyah(widget.initialAyah!, surah.ayahs);
+                    }
+                  });
+                });
               }
 
               return Stack(
@@ -174,46 +188,40 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
                         curr.isFullSurahMode &&
                         curr.activeAyahNumber != null,
                     listener: (context, audioState) {
-                      _scrollToAyah(audioState.activeAyahNumber!);
+                      _scrollToAyah(audioState.activeAyahNumber!, surah.ayahs);
+
+                      // Auto-save bookmark when playing continuously
+                      context.read<BookmarkCubit>().saveBookmark(
+                        surahNumber: surah.number,
+                        ayahNumber: audioState.activeAyahNumber!,
+                        surahName: surah.nameLatin,
+                      );
                     },
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
+                    child: ScrollablePositionedList.builder(
+                      itemScrollController: _itemScrollController,
+                      itemPositionsListener: _itemPositionsListener,
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
                         top: 16,
                         bottom: 80,
                       ),
-                      child: Column(
-                        children: [
-                          _buildSurahHeader(context, surah),
-                          ...surah.ayahs.map((ayah) {
-                            // If we just loaded and this is the initialAyah, post a frame callback to scroll
-                            if (widget.initialAyah != null &&
-                                ayah.ayahNumber == widget.initialAyah &&
-                                !_hasScrolledToInitial) {
-                              _hasScrolledToInitial = true;
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                Future.delayed(
-                                  const Duration(milliseconds: 300),
-                                  () {
-                                    _scrollToAyah(widget.initialAyah!);
-                                  },
-                                );
-                              });
-                            }
+                      itemCount: surah.ayahs.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return _buildSurahHeader(context, surah);
+                        }
+                        final ayah = surah.ayahs[index - 1];
 
-                            return _buildAyahCard(
-                              context,
-                              surah.nameLatin,
-                              ayah,
-                              textColor,
-                              subTextColor,
-                              cardBg,
-                            );
-                          }),
-                        ],
-                      ),
+                        return _buildAyahCard(
+                          context,
+                          surah.nameLatin,
+                          ayah,
+                          textColor,
+                          subTextColor,
+                          cardBg,
+                        );
+                      },
                     ),
                   ),
                   // Audio player bar overlay at bottom
@@ -227,6 +235,51 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
               );
             }
             return const SizedBox();
+          },
+        ),
+        floatingActionButton: BlocBuilder<SurahDetailBloc, SurahDetailState>(
+          builder: (context, state) {
+            if (state is SurahDetailLoaded) {
+              return BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
+                builder: (context, audioState) {
+                  // Hide FAB when audio is active (playing or paused etc.)
+                  if (audioState.status != AudioStatus.idle) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final surah = state.surahDetail;
+                  return BlocBuilder<BookmarkCubit, BookmarkState>(
+                    builder: (context, bookmarkState) {
+                      int startIndex = 0;
+                      if (bookmarkState.surahNumber == surah.number &&
+                          bookmarkState.ayahNumber != null) {
+                        startIndex = bookmarkState.ayahNumber! - 1;
+                        if (startIndex < 0) startIndex = 0;
+                      }
+
+                      return FloatingActionButton.extended(
+                        onPressed: () {
+                          context.read<AudioPlayerCubit>().playFullSurah(
+                            surahName: surah.nameLatin,
+                            ayahs: surah.ayahs,
+                            startFromIndex: startIndex,
+                          );
+                        },
+                        icon: const Icon(Icons.play_arrow),
+                        label: Text(
+                          startIndex == 0
+                              ? 'Play Full Surah'
+                              : 'Lanjut Ayat ${startIndex + 1}',
+                        ),
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.white,
+                      );
+                    },
+                  );
+                },
+              );
+            }
+            return const SizedBox.shrink();
           },
         ),
       ),
@@ -543,7 +596,6 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
             : null;
 
         return Container(
-          key: _ayahKeys[ayah.ayahNumber],
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(

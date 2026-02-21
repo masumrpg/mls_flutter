@@ -122,7 +122,7 @@ class QuranLocalDataSource {
         db.ayahsTable,
         detail.ayahs
             .map((a) => AyahsTableCompanion.insert(
-                  id: Value((a as AyahModel).id),
+                id: Value(a.id),
                   surahNumber: a.surahNumber,
                   ayahNumber: a.ayahNumber,
                   arab: a.arab,

@@ -1,8 +1,6 @@
 import '../../../../core/network/api_client.dart';
 import '../../../../core/error/exception.dart';
 import '../models/quran_model.dart';
-// import 'package:dio/dio.dart'; // Uncomment if needed
-
 import '../models/surah_detail_model.dart';
 
 abstract class QuranRemoteDataSource {
@@ -68,6 +66,7 @@ class QuranRemoteDataSourceImpl implements QuranRemoteDataSource {
 
       // Re-assign the aggregated ayahs into the base payload
       baseData!['ayahs'] = allAyahs;
+
       return SurahDetailModel.fromJson(baseData);
     } catch (e) {
       throw ServerException('Failed to fetch surah detail: $e');

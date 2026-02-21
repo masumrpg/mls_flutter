@@ -120,10 +120,8 @@ class QuranPage extends StatelessWidget {
                 color: AppColors.primary,
                 onRefresh: () async {
                   context.read<QuranBloc>().add(RefreshSurahs());
-                  // Wait for state change
-                  await context.read<QuranBloc>().stream.firstWhere(
-                    (s) => s is QuranLoaded || s is QuranError,
-                  );
+                  // Wait slightly to let the bloc process it before dismissing the spinner
+                  await Future.delayed(const Duration(milliseconds: 1500));
                 },
                 child: CustomScrollView(
                   slivers: [
