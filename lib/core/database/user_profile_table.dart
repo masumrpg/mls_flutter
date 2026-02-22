@@ -3,8 +3,9 @@ import 'package:drift/drift.dart';
 @DataClassName('UserProfile')
 class UserProfileTable extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text().withDefault(const Constant('Ahmad Zulfikar'))();
-  TextColumn get email => text().withDefault(const Constant('ahmad.z@example.com'))();
+  TextColumn get name => text().withDefault(const Constant('Ma\'sum'))();
+  TextColumn get email =>
+      text().withDefault(const Constant('masum@example.com'))();
   TextColumn get avatarUrl => text().nullable()();
 
   // Reading Progress

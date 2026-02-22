@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
           ),
           const CircleAvatar(
              radius: 20,
-             backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=ahmad'),
+            backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=masum'),
           ),
         ],
       ),
@@ -128,10 +128,10 @@ class _HomePageState extends State<HomePage> {
 
   String _getGreeting() {
     final hour = _now.hour;
-    if (hour < 11) return 'Sabahul Khair, Ahmad';
-    if (hour < 15) return "Naharun Sa'id, Ahmad";
-    if (hour < 18) return "Masa'ul Khair, Ahmad";
-    return "Lailatun Sa'idah, Ahmad";
+    if (hour < 11) return 'Sabahul Khair, Ma\'sum';
+    if (hour < 15) return "Naharun Sa'id, Ma'sum";
+    if (hour < 18) return "Masa'ul Khair, Ma'sum";
+    return "Lailatun Sa'idah, Ma'sum";
   }
 
   Widget _buildStatusCard(SholatScheduleEntity schedule) {

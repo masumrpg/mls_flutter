@@ -3022,7 +3022,7 @@ class $UserProfileTableTable extends UserProfileTable
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant('Ahmad Zulfikar'),
+    defaultValue: const Constant('Ma\'sum'),
   );
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
@@ -3032,7 +3032,7 @@ class $UserProfileTableTable extends UserProfileTable
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant('ahmad.z@example.com'),
+    defaultValue: const Constant('masum@example.com'),
   );
   static const VerificationMeta _avatarUrlMeta = const VerificationMeta(
     'avatarUrl',

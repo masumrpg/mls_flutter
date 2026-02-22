@@ -188,7 +188,7 @@ class AppDrawer extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   image: const DecorationImage(
-                    image: NetworkImage('https://i.pravatar.cc/150?u=ahmad'),
+                    image: NetworkImage('https://i.pravatar.cc/150?u=masum'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -214,7 +214,7 @@ class AppDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Ahmad Zulfikar',
+                  'Ma\'sum',
                   style: TextStyle(
                     color: textColor,
                     fontSize: 18,
@@ -222,7 +222,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'ahmad.zulfikar@email.com',
+                  'masum@email.com',
                   style: TextStyle(
                     color: subTextColor,
                     fontSize: 13,

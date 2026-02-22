@@ -42,7 +42,7 @@ class _ProfilPageState extends State<ProfilPage> {
               child: const CircleAvatar(
                 radius: 50,
                 backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=11',
+                  'https://i.pravatar.cc/150?u=masum',
                 ),
                 backgroundColor: Colors.transparent,
               ),
@@ -59,7 +59,7 @@ class _ProfilPageState extends State<ProfilPage> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Ahmad Zulfikar',
+          'Ma\'sum',
           style: AppTypography.textTheme.headlineMedium?.copyWith(
             color: _textColor,
             fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class _ProfilPageState extends State<ProfilPage> {
         ),
         const SizedBox(height: 4),
         Text(
-          'ahmad.z@example.com',
+          'masum@example.com',
           style: AppTypography.textTheme.bodyMedium?.copyWith(
             color: _subTextColor,
           ),

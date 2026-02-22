@@ -140,7 +140,7 @@ class _QuranPageState extends State<QuranPage> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Ahmad',
+            'Ma\'sum',
             style: AppTypography.textTheme.headlineMedium?.copyWith(
               color: textColor,
               fontWeight: FontWeight.bold,

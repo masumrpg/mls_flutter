@@ -191,7 +191,7 @@ class _SholatPageState extends State<SholatPage> {
               const CircleAvatar(
                 radius: 20,
                 backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?u=ahmad',
+                  'https://i.pravatar.cc/150?u=masum',
                 ),
               ),
             ],
