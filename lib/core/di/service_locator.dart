@@ -18,10 +18,11 @@ import '../../features/quran/domain/repositories/quran_repository.dart';
 import '../../features/quran/bloc/quran_bloc.dart';
 import '../../features/quran/bloc/surah_detail_bloc.dart';
 
-import '../../features/hadis/data/datasources/hadis_remote_datasource.dart';
 import '../../features/hadis/data/repositories/hadis_repository_impl.dart';
 import '../../features/hadis/domain/repositories/hadis_repository.dart';
-import '../../features/hadis/bloc/hadis_bloc.dart';
+import '../../features/hadis/bloc/hadis_explore_bloc.dart';
+import '../../features/hadis/bloc/hadis_search_bloc.dart';
+import '../../features/hadis/bloc/hadis_detail_bloc.dart';
 
 import '../../features/kalender/data/datasources/kalender_remote_datasource.dart';
 import '../../features/kalender/data/repositories/kalender_repository_impl.dart';
@@ -92,16 +93,17 @@ Future<void> setupServiceLocator() async {
   );
 
   // ─── Hadis Feature ──────────────────────────────────────────────
-  sl.registerLazySingleton<HadisRemoteDataSource>(
-    () => HadisRemoteDataSourceImpl(sl()),
-  );
-
   sl.registerLazySingleton<HadisRepository>(
-    () => HadisRepositoryImpl(sl()),
+    () => HadisRepositoryImpl(sl<ApiClient>().dio, sl<AppDatabase>()),
   );
 
-  sl.registerFactory<HadisBloc>(
-    () => HadisBloc(repository: sl()),
+  sl.registerFactory<HadisExploreBloc>(
+    () => HadisExploreBloc(repository: sl()),
+  );
+
+  sl.registerFactory<HadisSearchBloc>(() => HadisSearchBloc(repository: sl()));
+
+  sl.registerFactory<HadisDetailBloc>(() => HadisDetailBloc(repository: sl()),
   );
 
   // ─── Kalender Feature ───────────────────────────────────────────

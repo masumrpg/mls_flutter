@@ -336,11 +336,27 @@ class _HomePageState extends State<HomePage> {
   Widget _buildMenuSection() {
     final menus = [
       {'title': 'Al-Qur\'an', 'icon': Icons.menu_book, 'route': RouteNames.quran},
+      {
+        'title': 'Hadis',
+        'icon': Icons.library_books,
+        'route': RouteNames.hadis,
+      },
       {'title': 'Dzikir & Doa', 'icon': Icons.auto_stories, 'route': RouteNames.quran},
-      {'title': 'Kalender Islam', 'icon': Icons.calendar_month, 'route': RouteNames.quran},
-      {'title': 'Tanya Jawab', 'icon': Icons.chat_bubble, 'route': RouteNames.quran},
-      {'title': 'Jadwal YTS', 'icon': Icons.calendar_today_outlined, 'route': RouteNames.quran},
-      {'title': 'Perpustakaan', 'icon': Icons.library_books, 'route': RouteNames.quran},
+      {
+        'title': 'Kalender Islam',
+        'icon': Icons.calendar_month,
+        'route': RouteNames.kalender,
+      },
+      {
+        'title': 'Arah Kiblat',
+        'icon': Icons.explore,
+        'route': RouteNames.qibla,
+      },
+      {
+        'title': 'Jadwal Sholat',
+        'icon': Icons.access_time_filled,
+        'route': RouteNames.sholat,
+      },
     ];
 
     return Padding(

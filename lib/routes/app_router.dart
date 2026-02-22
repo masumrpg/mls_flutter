@@ -12,6 +12,8 @@ import '../features/quran/ui/pages/quran_page.dart';
 import '../features/quran/ui/pages/quran_surah_detail_page.dart';
 import '../features/sholat/ui/pages/sholat_page.dart';
 import '../features/hadis/ui/pages/hadis_page.dart';
+import '../features/hadis/ui/pages/hadis_search_page.dart';
+import '../features/hadis/ui/pages/hadis_detail_page.dart';
 import '../features/kalender/ui/pages/kalender_page.dart';
 import '../features/profil/ui/pages/profil_page.dart';
 import '../features/qibla/ui/pages/qibla_page.dart';
@@ -80,6 +82,19 @@ class AppRouter {
         path: RouteNames.hadis,
         name: RouteNames.hadis,
         builder: (context, state) => const HadisPage(),
+      ),
+      GoRoute(
+        path: RouteNames.hadisSearch,
+        name: RouteNames.hadisSearch,
+        builder: (context, state) => const HadisSearchPage(),
+      ),
+      GoRoute(
+        path: '${RouteNames.hadisDetail}/:id',
+        name: RouteNames.hadisDetail,
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '1') ?? 1;
+          return HadisDetailPage(hadisId: id);
+        },
       ),
       GoRoute(
         path: RouteNames.kalender,

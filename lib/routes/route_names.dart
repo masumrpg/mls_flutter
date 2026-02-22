@@ -8,6 +8,8 @@ class RouteNames {
   static const String quran = '/quran';
   static const String sholat = '/sholat';
   static const String hadis = '/hadis';
+  static const String hadisSearch = '/hadis-search';
+  static const String hadisDetail = '/hadis-detail';
   static const String kalender = '/kalender';
   static const String profil = '/profil';
   static const String qibla = '/qibla';

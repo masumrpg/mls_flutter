@@ -1,43 +1,36 @@
-import '../../domain/entities/hadis_entity.dart';
+class HadisModel {
+  final int id;
+  final String textAr;
+  final String textId;
+  final String? grade;
+  final String? takhrij;
+  final String? hikmah;
 
-class HadisTextModel extends HadisTextEntity {
-  const HadisTextModel({
-    required super.ar,
-    required super.id,
+  HadisModel({
+    required this.id,
+    required this.textAr,
+    required this.textId,
+    this.grade,
+    this.takhrij,
+    this.hikmah,
   });
 
-  factory HadisTextModel.fromJson(Map<String, dynamic> json) {
-    return HadisTextModel(
-      ar: json['ar'] as String? ?? '',
-      id: json['id'] as String? ?? '',
-    );
-  }
+  factory HadisModel.fromJson(Map<String, dynamic> json) {
+    String ar = '';
+    String id = '';
 
-  Map<String, dynamic> toJson() {
-    return {
-      'ar': ar,
-      'id': id,
-    };
-  }
+    final textNode = json['text'];
+    if (textNode is Map) {
+      ar = textNode['ar']?.toString() ?? '';
+      id = textNode['id']?.toString() ?? '';
+    } else if (textNode is String) {
+      id = textNode;
+    }
 
-  HadisTextEntity toEntity() {
-    return HadisTextEntity(ar: ar, id: id);
-  }
-}
-
-class HadisEntryModel extends HadisEntryEntity {
-  const HadisEntryModel({
-    required super.id,
-    required super.text,
-    super.grade,
-    super.takhrij,
-    super.hikmah,
-  });
-
-  factory HadisEntryModel.fromJson(Map<String, dynamic> json) {
-    return HadisEntryModel(
+    return HadisModel(
       id: json['id'] as int? ?? 0,
-      text: HadisTextModel.fromJson(json['text'] as Map<String, dynamic>? ?? {}),
+      textAr: ar,
+      textId: id,
       grade: json['grade'] as String?,
       takhrij: json['takhrij'] as String?,
       hikmah: json['hikmah'] as String?,
@@ -47,109 +40,69 @@ class HadisEntryModel extends HadisEntryEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'text': (text as HadisTextModel).toJson(),
+      'text': {'ar': textAr, 'id': textId},
       'grade': grade,
       'takhrij': takhrij,
       'hikmah': hikmah,
     };
   }
-
-  HadisEntryEntity toEntity() {
-    return HadisEntryEntity(
-      id: id,
-      text: (text as HadisTextModel).toEntity(),
-      grade: grade,
-      takhrij: takhrij,
-      hikmah: hikmah,
-    );
-  }
 }
 
-class HadisPagingModel extends HadisPagingEntity {
-  const HadisPagingModel({
-    required super.current,
-    required super.perPage,
-    required super.totalData,
-    required super.totalPages,
-    required super.hasPrev,
-    required super.hasNext,
-    super.nextPage,
-    super.prevPage,
-    super.firstPage,
-    super.lastPage,
+class HadisPagingModel {
+  final int current;
+  final int perPage;
+  final int totalData;
+  final int totalPages;
+  final bool hasNext;
+
+  HadisPagingModel({
+    required this.current,
+    required this.perPage,
+    required this.totalData,
+    required this.totalPages,
+    required this.hasNext,
   });
 
   factory HadisPagingModel.fromJson(Map<String, dynamic> json) {
     return HadisPagingModel(
       current: json['current'] as int? ?? 1,
-      perPage: json['per_page'] as int? ?? 0,
+      perPage: json['per_page'] as int? ?? 10,
       totalData: json['total_data'] as int? ?? 0,
       totalPages: json['total_pages'] as int? ?? 0,
-      hasPrev: json['has_prev'] as bool? ?? false,
       hasNext: json['has_next'] as bool? ?? false,
-      nextPage: json['next_page'] as int?,
-      prevPage: json['prev_page'] as int?,
-      firstPage: json['first_page'] as int?,
-      lastPage: json['last_page'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'current': current,
-      'per_page': perPage,
-      'total_data': totalData,
-      'total_pages': totalPages,
-      'has_prev': hasPrev,
-      'has_next': hasNext,
-      'next_page': nextPage,
-      'prev_page': prevPage,
-      'first_page': firstPage,
-      'last_page': lastPage,
-    };
-  }
-
-  HadisPagingEntity toEntity() {
-    return HadisPagingEntity(
-      current: current,
-      perPage: perPage,
-      totalData: totalData,
-      totalPages: totalPages,
-      hasPrev: hasPrev,
-      hasNext: hasNext,
-      nextPage: nextPage,
-      prevPage: prevPage,
-      firstPage: firstPage,
-      lastPage: lastPage,
     );
   }
 }
 
-class HadisExploreModel extends HadisExploreEntity {
-  const HadisExploreModel({
-    required super.paging,
-    required super.hadis,
+class HadisResponseModel {
+  final HadisPagingModel? paging;
+  final List<HadisModel> hadis;
+
+  HadisResponseModel({this.paging, this.hadis = const [],
   });
 
-  factory HadisExploreModel.fromJson(Map<String, dynamic> json) {
-    var hadisList = json['hadis'] as List<dynamic>? ?? [];
-    return HadisExploreModel(
-      paging: HadisPagingModel.fromJson(json['paging'] as Map<String, dynamic>? ?? {}),
-      hadis: hadisList.map((i) => HadisEntryModel.fromJson(i as Map<String, dynamic>)).toList(),
-    );
-  }
+  factory HadisResponseModel.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] as Map<String, dynamic>?;
+    if (data == null) {
+      return HadisResponseModel();
+    }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'paging': (paging as HadisPagingModel).toJson(),
-      'hadis': hadis.map((h) => (h as HadisEntryModel).toJson()).toList(),
-    };
-  }
+    // Check if it's explore/search (returns hadis list) or show (returns single hadis)
+    bool isList = data.containsKey('hadis');
 
-  HadisExploreEntity toEntity() {
-    return HadisExploreEntity(
-      paging: (paging as HadisPagingModel).toEntity(),
-      hadis: hadis.map((h) => (h as HadisEntryModel).toEntity()).toList(),
-    );
+    if (isList) {
+      final items =
+          (data['hadis'] as List?)
+              ?.map((e) => HadisModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [];
+      final paging = data['paging'] != null
+          ? HadisPagingModel.fromJson(data['paging'] as Map<String, dynamic>)
+          : null;
+      return HadisResponseModel(paging: paging, hadis: items);
+    } else {
+      // It's a single detail show response
+      return HadisResponseModel(hadis: [HadisModel.fromJson(data)]);
+    }
   }
 }

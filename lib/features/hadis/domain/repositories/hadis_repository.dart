@@ -1,7 +1,13 @@
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failure.dart';
-import '../entities/hadis_entity.dart';
+import '../../data/models/hadis_model.dart';
 
 abstract class HadisRepository {
-  Future<Either<Failure, HadisExploreEntity>> exploreHadis({int page = 1, int limit = 10});
+  Future<Either<Failure, HadisResponseModel>> getExplore(int page, int limit);
+  Future<Either<Failure, HadisResponseModel>> searchHadis(
+    String query,
+    int page,
+    int limit,
+  );
+  Future<Either<Failure, HadisModel>> getHadisDetail(int id);
 }

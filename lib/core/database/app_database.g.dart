@@ -2720,6 +2720,281 @@ class LocationCacheTableCompanion
   }
 }
 
+class $ApiCacheTableTable extends ApiCacheTable
+    with TableInfo<$ApiCacheTableTable, ApiCacheTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ApiCacheTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _endpointMeta = const VerificationMeta(
+    'endpoint',
+  );
+  @override
+  late final GeneratedColumn<String> endpoint = GeneratedColumn<String>(
+    'endpoint',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _responseBodyMeta = const VerificationMeta(
+    'responseBody',
+  );
+  @override
+  late final GeneratedColumn<String> responseBody = GeneratedColumn<String>(
+    'response_body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [endpoint, responseBody, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'api_cache_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ApiCacheTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('endpoint')) {
+      context.handle(
+        _endpointMeta,
+        endpoint.isAcceptableOrUnknown(data['endpoint']!, _endpointMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_endpointMeta);
+    }
+    if (data.containsKey('response_body')) {
+      context.handle(
+        _responseBodyMeta,
+        responseBody.isAcceptableOrUnknown(
+          data['response_body']!,
+          _responseBodyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_responseBodyMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {endpoint};
+  @override
+  ApiCacheTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ApiCacheTableData(
+      endpoint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}endpoint'],
+      )!,
+      responseBody: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}response_body'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ApiCacheTableTable createAlias(String alias) {
+    return $ApiCacheTableTable(attachedDatabase, alias);
+  }
+}
+
+class ApiCacheTableData extends DataClass
+    implements Insertable<ApiCacheTableData> {
+  final String endpoint;
+  final String responseBody;
+  final DateTime updatedAt;
+  const ApiCacheTableData({
+    required this.endpoint,
+    required this.responseBody,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['endpoint'] = Variable<String>(endpoint);
+    map['response_body'] = Variable<String>(responseBody);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ApiCacheTableCompanion toCompanion(bool nullToAbsent) {
+    return ApiCacheTableCompanion(
+      endpoint: Value(endpoint),
+      responseBody: Value(responseBody),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ApiCacheTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ApiCacheTableData(
+      endpoint: serializer.fromJson<String>(json['endpoint']),
+      responseBody: serializer.fromJson<String>(json['responseBody']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'endpoint': serializer.toJson<String>(endpoint),
+      'responseBody': serializer.toJson<String>(responseBody),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ApiCacheTableData copyWith({
+    String? endpoint,
+    String? responseBody,
+    DateTime? updatedAt,
+  }) => ApiCacheTableData(
+    endpoint: endpoint ?? this.endpoint,
+    responseBody: responseBody ?? this.responseBody,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ApiCacheTableData copyWithCompanion(ApiCacheTableCompanion data) {
+    return ApiCacheTableData(
+      endpoint: data.endpoint.present ? data.endpoint.value : this.endpoint,
+      responseBody: data.responseBody.present
+          ? data.responseBody.value
+          : this.responseBody,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ApiCacheTableData(')
+          ..write('endpoint: $endpoint, ')
+          ..write('responseBody: $responseBody, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(endpoint, responseBody, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ApiCacheTableData &&
+          other.endpoint == this.endpoint &&
+          other.responseBody == this.responseBody &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ApiCacheTableCompanion extends UpdateCompanion<ApiCacheTableData> {
+  final Value<String> endpoint;
+  final Value<String> responseBody;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ApiCacheTableCompanion({
+    this.endpoint = const Value.absent(),
+    this.responseBody = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ApiCacheTableCompanion.insert({
+    required String endpoint,
+    required String responseBody,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : endpoint = Value(endpoint),
+       responseBody = Value(responseBody),
+       updatedAt = Value(updatedAt);
+  static Insertable<ApiCacheTableData> custom({
+    Expression<String>? endpoint,
+    Expression<String>? responseBody,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (endpoint != null) 'endpoint': endpoint,
+      if (responseBody != null) 'response_body': responseBody,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ApiCacheTableCompanion copyWith({
+    Value<String>? endpoint,
+    Value<String>? responseBody,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ApiCacheTableCompanion(
+      endpoint: endpoint ?? this.endpoint,
+      responseBody: responseBody ?? this.responseBody,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (endpoint.present) {
+      map['endpoint'] = Variable<String>(endpoint.value);
+    }
+    if (responseBody.present) {
+      map['response_body'] = Variable<String>(responseBody.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ApiCacheTableCompanion(')
+          ..write('endpoint: $endpoint, ')
+          ..write('responseBody: $responseBody, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2732,6 +3007,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $NotificationSettingsTableTable(this);
   late final $LocationCacheTableTable locationCacheTable =
       $LocationCacheTableTable(this);
+  late final $ApiCacheTableTable apiCacheTable = $ApiCacheTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2743,6 +3019,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     prayerSchedulesTable,
     notificationSettingsTable,
     locationCacheTable,
+    apiCacheTable,
   ];
 }
 
@@ -4207,6 +4484,174 @@ typedef $$LocationCacheTableTableProcessedTableManager =
       LocationCacheTableData,
       PrefetchHooks Function()
     >;
+typedef $$ApiCacheTableTableCreateCompanionBuilder =
+    ApiCacheTableCompanion Function({
+      required String endpoint,
+      required String responseBody,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ApiCacheTableTableUpdateCompanionBuilder =
+    ApiCacheTableCompanion Function({
+      Value<String> endpoint,
+      Value<String> responseBody,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ApiCacheTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ApiCacheTableTable> {
+  $$ApiCacheTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get endpoint => $composableBuilder(
+    column: $table.endpoint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get responseBody => $composableBuilder(
+    column: $table.responseBody,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ApiCacheTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ApiCacheTableTable> {
+  $$ApiCacheTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get endpoint => $composableBuilder(
+    column: $table.endpoint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get responseBody => $composableBuilder(
+    column: $table.responseBody,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ApiCacheTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ApiCacheTableTable> {
+  $$ApiCacheTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get endpoint =>
+      $composableBuilder(column: $table.endpoint, builder: (column) => column);
+
+  GeneratedColumn<String> get responseBody => $composableBuilder(
+    column: $table.responseBody,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ApiCacheTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ApiCacheTableTable,
+          ApiCacheTableData,
+          $$ApiCacheTableTableFilterComposer,
+          $$ApiCacheTableTableOrderingComposer,
+          $$ApiCacheTableTableAnnotationComposer,
+          $$ApiCacheTableTableCreateCompanionBuilder,
+          $$ApiCacheTableTableUpdateCompanionBuilder,
+          (
+            ApiCacheTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $ApiCacheTableTable,
+              ApiCacheTableData
+            >,
+          ),
+          ApiCacheTableData,
+          PrefetchHooks Function()
+        > {
+  $$ApiCacheTableTableTableManager(_$AppDatabase db, $ApiCacheTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ApiCacheTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ApiCacheTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ApiCacheTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> endpoint = const Value.absent(),
+                Value<String> responseBody = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ApiCacheTableCompanion(
+                endpoint: endpoint,
+                responseBody: responseBody,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String endpoint,
+                required String responseBody,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ApiCacheTableCompanion.insert(
+                endpoint: endpoint,
+                responseBody: responseBody,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ApiCacheTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ApiCacheTableTable,
+      ApiCacheTableData,
+      $$ApiCacheTableTableFilterComposer,
+      $$ApiCacheTableTableOrderingComposer,
+      $$ApiCacheTableTableAnnotationComposer,
+      $$ApiCacheTableTableCreateCompanionBuilder,
+      $$ApiCacheTableTableUpdateCompanionBuilder,
+      (
+        ApiCacheTableData,
+        BaseReferences<_$AppDatabase, $ApiCacheTableTable, ApiCacheTableData>,
+      ),
+      ApiCacheTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4226,4 +4671,6 @@ class $AppDatabaseManager {
       );
   $$LocationCacheTableTableTableManager get locationCacheTable =>
       $$LocationCacheTableTableTableManager(_db, _db.locationCacheTable);
+  $$ApiCacheTableTableTableManager get apiCacheTable =>
+      $$ApiCacheTableTableTableManager(_db, _db.apiCacheTable);
 }
