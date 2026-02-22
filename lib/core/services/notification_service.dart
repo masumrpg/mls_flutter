@@ -127,6 +127,43 @@ class NotificationService {
     }
   }
 
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+    String? sound,
+  }) async {
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'prayer_channel_id',
+        'Prayer Times',
+        channelDescription: 'Notifications for prayer times',
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        sound: sound != null
+            ? RawResourceAndroidNotificationSound(sound)
+            : null,
+      ),
+      iOS: DarwinNotificationDetails(
+        presentSound: true,
+        sound: sound != null ? '$sound.mp3' : null,
+      ),
+      linux: const LinuxNotificationDetails(),
+    );
+
+    try {
+      await _notificationsPlugin.show(
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: notificationDetails,
+      );
+    } catch (e) {
+      debugPrint('Warning: Failed to show immediate notification: $e');
+    }
+  }
+
   Future<void> cancelAll() async {
     await _notificationsPlugin.cancelAll();
   }

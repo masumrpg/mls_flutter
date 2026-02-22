@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
 
   String _getGreeting() {
     final hour = _now.hour;
-    if (hour < 11) return 'Sabahul Khair, Ma\'sum';
+    if (hour < 11) return "Sabahul Khair, Ma'sum";
     if (hour < 15) return "Naharun Sa'id, Ma'sum";
     if (hour < 18) return "Masa'ul Khair, Ma'sum";
     return "Lailatun Sa'idah, Ma'sum";

@@ -34,6 +34,8 @@ class _SholatPageState extends State<SholatPage> {
   final Map<String, dynamic> _notificationSettings = {};
   Timer? _timer;
   DateTime _now = DateTime.now();
+  int _testMinutes = 1;
+  DateTime? _scheduledTestTime;
 
   @override
   void initState() {
@@ -53,6 +55,12 @@ class _SholatPageState extends State<SholatPage> {
       if (mounted) {
         setState(() {
           _now = DateTime.now();
+          if (_scheduledTestTime != null) {
+            if (_now.isAfter(_scheduledTestTime!) ||
+                _now.isAtSameMomentAs(_scheduledTestTime!)) {
+              _scheduledTestTime = null; // Clear when expired
+            }
+          }
         });
       }
     });
@@ -124,6 +132,8 @@ class _SholatPageState extends State<SholatPage> {
           ),
           const SizedBox(height: 16),
           _buildPrayerList(schedule, nextPrayer?.name),
+          const SizedBox(height: 32),
+          _buildTestSection(context),
           const SizedBox(height: 32),
         ],
       ),
@@ -651,6 +661,156 @@ class _SholatPageState extends State<SholatPage> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildTestSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'TEST',
+            style: TextStyle(
+              color: _textColor.withValues(alpha: 0.6),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.white,
+              minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () async {
+              await NotificationService.instance.requestPermission();
+              NotificationService.instance.showNotification(
+                id: 9991,
+                title: '📌 Test Immediate',
+                body: 'Notification triggered immediately!',
+              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Immediate notification triggered'),
+                  ),
+                );
+              }
+            },
+            child: const Text('Trigger Immediate Notification'),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: '1',
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: _textColor),
+                  decoration: InputDecoration(
+                    labelText: 'Minutes delay',
+                    labelStyle: TextStyle(color: _subTextColor),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _subTextColor.withValues(alpha: 0.3),
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.primary),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    setState(() {
+                      _testMinutes = int.tryParse(val) ?? 1;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondary,
+                    foregroundColor: AppColors.white,
+                    minimumSize: const Size(
+                      double.infinity,
+                      56,
+                    ), // Matches default TextField height approximately
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () async {
+                    await NotificationService.instance.requestPermission();
+                    final scheduledTime = DateTime.now().add(
+                      Duration(minutes: _testMinutes),
+                    );
+                    setState(() {
+                      _scheduledTestTime = scheduledTime;
+                    });
+
+                    NotificationService.instance.schedulePrayerNotification(
+                      id: 9992,
+                      title: '⏰ Test Scheduled',
+                      body:
+                          'Notification triggered after $_testMinutes minutes!',
+                      scheduledTime: scheduledTime,
+                    );
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Notification scheduled for ${DateFormat('HH:mm:ss').format(scheduledTime)}',
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text('Schedule in $_testMinutes min'),
+                ),
+              ),
+            ],
+          ),
+          if (_scheduledTestTime != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.secondary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.secondary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.timer_outlined, color: AppColors.secondary),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Notification in: ${_scheduledTestTime!.difference(_now).inMinutes.remainder(60).toString().padLeft(2, '0')}:${_scheduledTestTime!.difference(_now).inSeconds.remainder(60).toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      color: AppColors.secondary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
