@@ -508,20 +508,39 @@ class _SholatPageState extends State<SholatPage> {
             ),
           ),
           if (isNext)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: _cardBg,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                'NEXT',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _cardBg,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    'NEXT',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                InkWell(
+                  onTap: () => _openSettings(
+                    context,
+                    name,
+                    alertType,
+                    setting['preReminderMinutes'] as int,
+                    time,
+                  ),
+                  child: Icon(bellIcon, color: AppColors.primary, size: 20),
+                ),
+              ],
             )
           else if (isPassed)
             Icon(Icons.check_circle, color: AppColors.primary, size: 20)

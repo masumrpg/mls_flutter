@@ -56,11 +56,12 @@ class NotificationService {
     if (kIsWeb) return;
 
     if (Platform.isAndroid) {
-      await _notificationsPlugin
+      final androidPlugin = _notificationsPlugin
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
-          >()
-          ?.requestNotificationsPermission();
+          >();
+      await androidPlugin?.requestNotificationsPermission();
+      await androidPlugin?.requestExactAlarmsPermission();
     } else if (Platform.isIOS) {
       await _notificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -108,14 +109,22 @@ class NotificationService {
     );
 
     // FIXED: Uses named parameters required by version 21+
-    await _notificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tzScheduledTime,
-      notificationDetails: notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
+    try {
+      await _notificationsPlugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tzScheduledTime,
+        notificationDetails: notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } on UnimplementedError {
+      debugPrint(
+        'Notification scheduling is not supported natively on this platform (e.g., Linux/Windows).',
+      );
+    } catch (e) {
+      debugPrint('Warning: Failed to schedule notification: $e');
+    }
   }
 
   Future<void> cancelAll() async {
