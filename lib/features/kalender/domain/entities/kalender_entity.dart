@@ -4,10 +4,7 @@ class KalenderEntity extends Equatable {
   final KalenderDateEntity ce;
   final KalenderDateEntity hijr;
 
-  const KalenderEntity({
-    required this.ce,
-    required this.hijr,
-  });
+  const KalenderEntity({required this.ce, required this.hijr});
 
   @override
   List<Object?> get props => [ce, hijr];

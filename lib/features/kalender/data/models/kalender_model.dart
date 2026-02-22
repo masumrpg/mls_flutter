@@ -1,10 +1,7 @@
 import '../../domain/entities/kalender_entity.dart';
 
 class KalenderModel extends KalenderEntity {
-  const KalenderModel({
-    required super.ce,
-    required super.hijr,
-  });
+  const KalenderModel({required super.ce, required super.hijr});
 
   factory KalenderModel.fromJson(Map<String, dynamic> json) {
     return KalenderModel(

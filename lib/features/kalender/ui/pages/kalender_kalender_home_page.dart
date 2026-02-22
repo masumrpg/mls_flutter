@@ -6,13 +6,9 @@ class KalenderKalenderHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kalender KalenderHome'),
-      ),
+      appBar: AppBar(title: const Text('Kalender KalenderHome')),
       body: const SafeArea(
-        child: Center(
-          child: Text('Kalender KalenderHome Page'),
-        ),
+        child: Center(child: Text('Kalender KalenderHome Page')),
       ),
     );
   }

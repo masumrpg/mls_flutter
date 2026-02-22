@@ -67,6 +67,7 @@ dependencies:
   hijri: ^3.0.0
   flutter_compass: ^0.8.1
   sensors_plus: ^7.0.0
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:
