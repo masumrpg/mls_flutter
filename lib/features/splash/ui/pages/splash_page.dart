@@ -30,10 +30,7 @@ class _SplashPageState extends State<SplashPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.mosque_rounded,
-              size: 100,
-              color: AppColors.white,
+            Image.asset('assets/images/logo.png', width: 150, height: 150,
             ),
             const SizedBox(height: 16),
             Text(
