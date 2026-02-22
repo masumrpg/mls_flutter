@@ -214,7 +214,7 @@ class _KalenderPageState extends State<KalenderPage> {
     }
 
     return Container(
-      margin: const EdgeInsets.all(4),
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(12),
@@ -229,10 +229,10 @@ class _KalenderPageState extends State<KalenderPage> {
               style: TextStyle(
                 color: textColor,
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 16,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 1),
             Text(
               hijriDate.hDay.toString(),
               style: TextStyle(color: subTextColor, fontSize: 10),

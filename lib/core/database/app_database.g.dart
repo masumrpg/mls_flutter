@@ -2995,6 +2995,662 @@ class ApiCacheTableCompanion extends UpdateCompanion<ApiCacheTableData> {
   }
 }
 
+class $UserProfileTableTable extends UserProfileTable
+    with TableInfo<$UserProfileTableTable, UserProfile> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserProfileTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('Ahmad Zulfikar'),
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('ahmad.z@example.com'),
+  );
+  static const VerificationMeta _avatarUrlMeta = const VerificationMeta(
+    'avatarUrl',
+  );
+  @override
+  late final GeneratedColumn<String> avatarUrl = GeneratedColumn<String>(
+    'avatar_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _completedPercentageMeta =
+      const VerificationMeta('completedPercentage');
+  @override
+  late final GeneratedColumn<double> completedPercentage =
+      GeneratedColumn<double>(
+        'completed_percentage',
+        aliasedName,
+        false,
+        type: DriftSqlType.double,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(0.45),
+      );
+  static const VerificationMeta _currentJuzMeta = const VerificationMeta(
+    'currentJuz',
+  );
+  @override
+  late final GeneratedColumn<int> currentJuz = GeneratedColumn<int>(
+    'current_juz',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(14),
+  );
+  static const VerificationMeta _totalJuzMeta = const VerificationMeta(
+    'totalJuz',
+  );
+  @override
+  late final GeneratedColumn<int> totalJuz = GeneratedColumn<int>(
+    'total_juz',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(30),
+  );
+  static const VerificationMeta _weeklyHoursMeta = const VerificationMeta(
+    'weeklyHours',
+  );
+  @override
+  late final GeneratedColumn<double> weeklyHours = GeneratedColumn<double>(
+    'weekly_hours',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(4.5),
+  );
+  static const VerificationMeta _weeklyTrendMeta = const VerificationMeta(
+    'weeklyTrend',
+  );
+  @override
+  late final GeneratedColumn<double> weeklyTrend = GeneratedColumn<double>(
+    'weekly_trend',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.12),
+  );
+  static const VerificationMeta _totalVersesMeta = const VerificationMeta(
+    'totalVerses',
+  );
+  @override
+  late final GeneratedColumn<int> totalVerses = GeneratedColumn<int>(
+    'total_verses',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(135),
+  );
+  static const VerificationMeta _dailyAvgVersesMeta = const VerificationMeta(
+    'dailyAvgVerses',
+  );
+  @override
+  late final GeneratedColumn<int> dailyAvgVerses = GeneratedColumn<int>(
+    'daily_avg_verses',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(19),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    email,
+    avatarUrl,
+    completedPercentage,
+    currentJuz,
+    totalJuz,
+    weeklyHours,
+    weeklyTrend,
+    totalVerses,
+    dailyAvgVerses,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_profile_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UserProfile> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
+    if (data.containsKey('avatar_url')) {
+      context.handle(
+        _avatarUrlMeta,
+        avatarUrl.isAcceptableOrUnknown(data['avatar_url']!, _avatarUrlMeta),
+      );
+    }
+    if (data.containsKey('completed_percentage')) {
+      context.handle(
+        _completedPercentageMeta,
+        completedPercentage.isAcceptableOrUnknown(
+          data['completed_percentage']!,
+          _completedPercentageMeta,
+        ),
+      );
+    }
+    if (data.containsKey('current_juz')) {
+      context.handle(
+        _currentJuzMeta,
+        currentJuz.isAcceptableOrUnknown(data['current_juz']!, _currentJuzMeta),
+      );
+    }
+    if (data.containsKey('total_juz')) {
+      context.handle(
+        _totalJuzMeta,
+        totalJuz.isAcceptableOrUnknown(data['total_juz']!, _totalJuzMeta),
+      );
+    }
+    if (data.containsKey('weekly_hours')) {
+      context.handle(
+        _weeklyHoursMeta,
+        weeklyHours.isAcceptableOrUnknown(
+          data['weekly_hours']!,
+          _weeklyHoursMeta,
+        ),
+      );
+    }
+    if (data.containsKey('weekly_trend')) {
+      context.handle(
+        _weeklyTrendMeta,
+        weeklyTrend.isAcceptableOrUnknown(
+          data['weekly_trend']!,
+          _weeklyTrendMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_verses')) {
+      context.handle(
+        _totalVersesMeta,
+        totalVerses.isAcceptableOrUnknown(
+          data['total_verses']!,
+          _totalVersesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('daily_avg_verses')) {
+      context.handle(
+        _dailyAvgVersesMeta,
+        dailyAvgVerses.isAcceptableOrUnknown(
+          data['daily_avg_verses']!,
+          _dailyAvgVersesMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  UserProfile map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserProfile(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      )!,
+      avatarUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}avatar_url'],
+      ),
+      completedPercentage: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}completed_percentage'],
+      )!,
+      currentJuz: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_juz'],
+      )!,
+      totalJuz: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_juz'],
+      )!,
+      weeklyHours: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}weekly_hours'],
+      )!,
+      weeklyTrend: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}weekly_trend'],
+      )!,
+      totalVerses: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_verses'],
+      )!,
+      dailyAvgVerses: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}daily_avg_verses'],
+      )!,
+    );
+  }
+
+  @override
+  $UserProfileTableTable createAlias(String alias) {
+    return $UserProfileTableTable(attachedDatabase, alias);
+  }
+}
+
+class UserProfile extends DataClass implements Insertable<UserProfile> {
+  final int id;
+  final String name;
+  final String email;
+  final String? avatarUrl;
+  final double completedPercentage;
+  final int currentJuz;
+  final int totalJuz;
+  final double weeklyHours;
+  final double weeklyTrend;
+  final int totalVerses;
+  final int dailyAvgVerses;
+  const UserProfile({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.avatarUrl,
+    required this.completedPercentage,
+    required this.currentJuz,
+    required this.totalJuz,
+    required this.weeklyHours,
+    required this.weeklyTrend,
+    required this.totalVerses,
+    required this.dailyAvgVerses,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['email'] = Variable<String>(email);
+    if (!nullToAbsent || avatarUrl != null) {
+      map['avatar_url'] = Variable<String>(avatarUrl);
+    }
+    map['completed_percentage'] = Variable<double>(completedPercentage);
+    map['current_juz'] = Variable<int>(currentJuz);
+    map['total_juz'] = Variable<int>(totalJuz);
+    map['weekly_hours'] = Variable<double>(weeklyHours);
+    map['weekly_trend'] = Variable<double>(weeklyTrend);
+    map['total_verses'] = Variable<int>(totalVerses);
+    map['daily_avg_verses'] = Variable<int>(dailyAvgVerses);
+    return map;
+  }
+
+  UserProfileTableCompanion toCompanion(bool nullToAbsent) {
+    return UserProfileTableCompanion(
+      id: Value(id),
+      name: Value(name),
+      email: Value(email),
+      avatarUrl: avatarUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(avatarUrl),
+      completedPercentage: Value(completedPercentage),
+      currentJuz: Value(currentJuz),
+      totalJuz: Value(totalJuz),
+      weeklyHours: Value(weeklyHours),
+      weeklyTrend: Value(weeklyTrend),
+      totalVerses: Value(totalVerses),
+      dailyAvgVerses: Value(dailyAvgVerses),
+    );
+  }
+
+  factory UserProfile.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserProfile(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      email: serializer.fromJson<String>(json['email']),
+      avatarUrl: serializer.fromJson<String?>(json['avatarUrl']),
+      completedPercentage: serializer.fromJson<double>(
+        json['completedPercentage'],
+      ),
+      currentJuz: serializer.fromJson<int>(json['currentJuz']),
+      totalJuz: serializer.fromJson<int>(json['totalJuz']),
+      weeklyHours: serializer.fromJson<double>(json['weeklyHours']),
+      weeklyTrend: serializer.fromJson<double>(json['weeklyTrend']),
+      totalVerses: serializer.fromJson<int>(json['totalVerses']),
+      dailyAvgVerses: serializer.fromJson<int>(json['dailyAvgVerses']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'email': serializer.toJson<String>(email),
+      'avatarUrl': serializer.toJson<String?>(avatarUrl),
+      'completedPercentage': serializer.toJson<double>(completedPercentage),
+      'currentJuz': serializer.toJson<int>(currentJuz),
+      'totalJuz': serializer.toJson<int>(totalJuz),
+      'weeklyHours': serializer.toJson<double>(weeklyHours),
+      'weeklyTrend': serializer.toJson<double>(weeklyTrend),
+      'totalVerses': serializer.toJson<int>(totalVerses),
+      'dailyAvgVerses': serializer.toJson<int>(dailyAvgVerses),
+    };
+  }
+
+  UserProfile copyWith({
+    int? id,
+    String? name,
+    String? email,
+    Value<String?> avatarUrl = const Value.absent(),
+    double? completedPercentage,
+    int? currentJuz,
+    int? totalJuz,
+    double? weeklyHours,
+    double? weeklyTrend,
+    int? totalVerses,
+    int? dailyAvgVerses,
+  }) => UserProfile(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    email: email ?? this.email,
+    avatarUrl: avatarUrl.present ? avatarUrl.value : this.avatarUrl,
+    completedPercentage: completedPercentage ?? this.completedPercentage,
+    currentJuz: currentJuz ?? this.currentJuz,
+    totalJuz: totalJuz ?? this.totalJuz,
+    weeklyHours: weeklyHours ?? this.weeklyHours,
+    weeklyTrend: weeklyTrend ?? this.weeklyTrend,
+    totalVerses: totalVerses ?? this.totalVerses,
+    dailyAvgVerses: dailyAvgVerses ?? this.dailyAvgVerses,
+  );
+  UserProfile copyWithCompanion(UserProfileTableCompanion data) {
+    return UserProfile(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      email: data.email.present ? data.email.value : this.email,
+      avatarUrl: data.avatarUrl.present ? data.avatarUrl.value : this.avatarUrl,
+      completedPercentage: data.completedPercentage.present
+          ? data.completedPercentage.value
+          : this.completedPercentage,
+      currentJuz: data.currentJuz.present
+          ? data.currentJuz.value
+          : this.currentJuz,
+      totalJuz: data.totalJuz.present ? data.totalJuz.value : this.totalJuz,
+      weeklyHours: data.weeklyHours.present
+          ? data.weeklyHours.value
+          : this.weeklyHours,
+      weeklyTrend: data.weeklyTrend.present
+          ? data.weeklyTrend.value
+          : this.weeklyTrend,
+      totalVerses: data.totalVerses.present
+          ? data.totalVerses.value
+          : this.totalVerses,
+      dailyAvgVerses: data.dailyAvgVerses.present
+          ? data.dailyAvgVerses.value
+          : this.dailyAvgVerses,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserProfile(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('email: $email, ')
+          ..write('avatarUrl: $avatarUrl, ')
+          ..write('completedPercentage: $completedPercentage, ')
+          ..write('currentJuz: $currentJuz, ')
+          ..write('totalJuz: $totalJuz, ')
+          ..write('weeklyHours: $weeklyHours, ')
+          ..write('weeklyTrend: $weeklyTrend, ')
+          ..write('totalVerses: $totalVerses, ')
+          ..write('dailyAvgVerses: $dailyAvgVerses')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    email,
+    avatarUrl,
+    completedPercentage,
+    currentJuz,
+    totalJuz,
+    weeklyHours,
+    weeklyTrend,
+    totalVerses,
+    dailyAvgVerses,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserProfile &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.email == this.email &&
+          other.avatarUrl == this.avatarUrl &&
+          other.completedPercentage == this.completedPercentage &&
+          other.currentJuz == this.currentJuz &&
+          other.totalJuz == this.totalJuz &&
+          other.weeklyHours == this.weeklyHours &&
+          other.weeklyTrend == this.weeklyTrend &&
+          other.totalVerses == this.totalVerses &&
+          other.dailyAvgVerses == this.dailyAvgVerses);
+}
+
+class UserProfileTableCompanion extends UpdateCompanion<UserProfile> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> email;
+  final Value<String?> avatarUrl;
+  final Value<double> completedPercentage;
+  final Value<int> currentJuz;
+  final Value<int> totalJuz;
+  final Value<double> weeklyHours;
+  final Value<double> weeklyTrend;
+  final Value<int> totalVerses;
+  final Value<int> dailyAvgVerses;
+  const UserProfileTableCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.email = const Value.absent(),
+    this.avatarUrl = const Value.absent(),
+    this.completedPercentage = const Value.absent(),
+    this.currentJuz = const Value.absent(),
+    this.totalJuz = const Value.absent(),
+    this.weeklyHours = const Value.absent(),
+    this.weeklyTrend = const Value.absent(),
+    this.totalVerses = const Value.absent(),
+    this.dailyAvgVerses = const Value.absent(),
+  });
+  UserProfileTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.email = const Value.absent(),
+    this.avatarUrl = const Value.absent(),
+    this.completedPercentage = const Value.absent(),
+    this.currentJuz = const Value.absent(),
+    this.totalJuz = const Value.absent(),
+    this.weeklyHours = const Value.absent(),
+    this.weeklyTrend = const Value.absent(),
+    this.totalVerses = const Value.absent(),
+    this.dailyAvgVerses = const Value.absent(),
+  });
+  static Insertable<UserProfile> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? email,
+    Expression<String>? avatarUrl,
+    Expression<double>? completedPercentage,
+    Expression<int>? currentJuz,
+    Expression<int>? totalJuz,
+    Expression<double>? weeklyHours,
+    Expression<double>? weeklyTrend,
+    Expression<int>? totalVerses,
+    Expression<int>? dailyAvgVerses,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (email != null) 'email': email,
+      if (avatarUrl != null) 'avatar_url': avatarUrl,
+      if (completedPercentage != null)
+        'completed_percentage': completedPercentage,
+      if (currentJuz != null) 'current_juz': currentJuz,
+      if (totalJuz != null) 'total_juz': totalJuz,
+      if (weeklyHours != null) 'weekly_hours': weeklyHours,
+      if (weeklyTrend != null) 'weekly_trend': weeklyTrend,
+      if (totalVerses != null) 'total_verses': totalVerses,
+      if (dailyAvgVerses != null) 'daily_avg_verses': dailyAvgVerses,
+    });
+  }
+
+  UserProfileTableCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? email,
+    Value<String?>? avatarUrl,
+    Value<double>? completedPercentage,
+    Value<int>? currentJuz,
+    Value<int>? totalJuz,
+    Value<double>? weeklyHours,
+    Value<double>? weeklyTrend,
+    Value<int>? totalVerses,
+    Value<int>? dailyAvgVerses,
+  }) {
+    return UserProfileTableCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      completedPercentage: completedPercentage ?? this.completedPercentage,
+      currentJuz: currentJuz ?? this.currentJuz,
+      totalJuz: totalJuz ?? this.totalJuz,
+      weeklyHours: weeklyHours ?? this.weeklyHours,
+      weeklyTrend: weeklyTrend ?? this.weeklyTrend,
+      totalVerses: totalVerses ?? this.totalVerses,
+      dailyAvgVerses: dailyAvgVerses ?? this.dailyAvgVerses,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (avatarUrl.present) {
+      map['avatar_url'] = Variable<String>(avatarUrl.value);
+    }
+    if (completedPercentage.present) {
+      map['completed_percentage'] = Variable<double>(completedPercentage.value);
+    }
+    if (currentJuz.present) {
+      map['current_juz'] = Variable<int>(currentJuz.value);
+    }
+    if (totalJuz.present) {
+      map['total_juz'] = Variable<int>(totalJuz.value);
+    }
+    if (weeklyHours.present) {
+      map['weekly_hours'] = Variable<double>(weeklyHours.value);
+    }
+    if (weeklyTrend.present) {
+      map['weekly_trend'] = Variable<double>(weeklyTrend.value);
+    }
+    if (totalVerses.present) {
+      map['total_verses'] = Variable<int>(totalVerses.value);
+    }
+    if (dailyAvgVerses.present) {
+      map['daily_avg_verses'] = Variable<int>(dailyAvgVerses.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserProfileTableCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('email: $email, ')
+          ..write('avatarUrl: $avatarUrl, ')
+          ..write('completedPercentage: $completedPercentage, ')
+          ..write('currentJuz: $currentJuz, ')
+          ..write('totalJuz: $totalJuz, ')
+          ..write('weeklyHours: $weeklyHours, ')
+          ..write('weeklyTrend: $weeklyTrend, ')
+          ..write('totalVerses: $totalVerses, ')
+          ..write('dailyAvgVerses: $dailyAvgVerses')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3008,6 +3664,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $LocationCacheTableTable locationCacheTable =
       $LocationCacheTableTable(this);
   late final $ApiCacheTableTable apiCacheTable = $ApiCacheTableTable(this);
+  late final $UserProfileTableTable userProfileTable = $UserProfileTableTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3020,6 +3679,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     notificationSettingsTable,
     locationCacheTable,
     apiCacheTable,
+    userProfileTable,
   ];
 }
 
@@ -4652,6 +5312,328 @@ typedef $$ApiCacheTableTableProcessedTableManager =
       ApiCacheTableData,
       PrefetchHooks Function()
     >;
+typedef $$UserProfileTableTableCreateCompanionBuilder =
+    UserProfileTableCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String> email,
+      Value<String?> avatarUrl,
+      Value<double> completedPercentage,
+      Value<int> currentJuz,
+      Value<int> totalJuz,
+      Value<double> weeklyHours,
+      Value<double> weeklyTrend,
+      Value<int> totalVerses,
+      Value<int> dailyAvgVerses,
+    });
+typedef $$UserProfileTableTableUpdateCompanionBuilder =
+    UserProfileTableCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String> email,
+      Value<String?> avatarUrl,
+      Value<double> completedPercentage,
+      Value<int> currentJuz,
+      Value<int> totalJuz,
+      Value<double> weeklyHours,
+      Value<double> weeklyTrend,
+      Value<int> totalVerses,
+      Value<int> dailyAvgVerses,
+    });
+
+class $$UserProfileTableTableFilterComposer
+    extends Composer<_$AppDatabase, $UserProfileTableTable> {
+  $$UserProfileTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get avatarUrl => $composableBuilder(
+    column: $table.avatarUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get completedPercentage => $composableBuilder(
+    column: $table.completedPercentage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get currentJuz => $composableBuilder(
+    column: $table.currentJuz,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalJuz => $composableBuilder(
+    column: $table.totalJuz,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get weeklyHours => $composableBuilder(
+    column: $table.weeklyHours,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get weeklyTrend => $composableBuilder(
+    column: $table.weeklyTrend,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalVerses => $composableBuilder(
+    column: $table.totalVerses,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get dailyAvgVerses => $composableBuilder(
+    column: $table.dailyAvgVerses,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$UserProfileTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserProfileTableTable> {
+  $$UserProfileTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get avatarUrl => $composableBuilder(
+    column: $table.avatarUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get completedPercentage => $composableBuilder(
+    column: $table.completedPercentage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get currentJuz => $composableBuilder(
+    column: $table.currentJuz,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalJuz => $composableBuilder(
+    column: $table.totalJuz,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get weeklyHours => $composableBuilder(
+    column: $table.weeklyHours,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get weeklyTrend => $composableBuilder(
+    column: $table.weeklyTrend,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalVerses => $composableBuilder(
+    column: $table.totalVerses,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get dailyAvgVerses => $composableBuilder(
+    column: $table.dailyAvgVerses,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UserProfileTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserProfileTableTable> {
+  $$UserProfileTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get avatarUrl =>
+      $composableBuilder(column: $table.avatarUrl, builder: (column) => column);
+
+  GeneratedColumn<double> get completedPercentage => $composableBuilder(
+    column: $table.completedPercentage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get currentJuz => $composableBuilder(
+    column: $table.currentJuz,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalJuz =>
+      $composableBuilder(column: $table.totalJuz, builder: (column) => column);
+
+  GeneratedColumn<double> get weeklyHours => $composableBuilder(
+    column: $table.weeklyHours,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get weeklyTrend => $composableBuilder(
+    column: $table.weeklyTrend,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalVerses => $composableBuilder(
+    column: $table.totalVerses,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get dailyAvgVerses => $composableBuilder(
+    column: $table.dailyAvgVerses,
+    builder: (column) => column,
+  );
+}
+
+class $$UserProfileTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UserProfileTableTable,
+          UserProfile,
+          $$UserProfileTableTableFilterComposer,
+          $$UserProfileTableTableOrderingComposer,
+          $$UserProfileTableTableAnnotationComposer,
+          $$UserProfileTableTableCreateCompanionBuilder,
+          $$UserProfileTableTableUpdateCompanionBuilder,
+          (
+            UserProfile,
+            BaseReferences<_$AppDatabase, $UserProfileTableTable, UserProfile>,
+          ),
+          UserProfile,
+          PrefetchHooks Function()
+        > {
+  $$UserProfileTableTableTableManager(
+    _$AppDatabase db,
+    $UserProfileTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserProfileTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserProfileTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserProfileTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String?> avatarUrl = const Value.absent(),
+                Value<double> completedPercentage = const Value.absent(),
+                Value<int> currentJuz = const Value.absent(),
+                Value<int> totalJuz = const Value.absent(),
+                Value<double> weeklyHours = const Value.absent(),
+                Value<double> weeklyTrend = const Value.absent(),
+                Value<int> totalVerses = const Value.absent(),
+                Value<int> dailyAvgVerses = const Value.absent(),
+              }) => UserProfileTableCompanion(
+                id: id,
+                name: name,
+                email: email,
+                avatarUrl: avatarUrl,
+                completedPercentage: completedPercentage,
+                currentJuz: currentJuz,
+                totalJuz: totalJuz,
+                weeklyHours: weeklyHours,
+                weeklyTrend: weeklyTrend,
+                totalVerses: totalVerses,
+                dailyAvgVerses: dailyAvgVerses,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String?> avatarUrl = const Value.absent(),
+                Value<double> completedPercentage = const Value.absent(),
+                Value<int> currentJuz = const Value.absent(),
+                Value<int> totalJuz = const Value.absent(),
+                Value<double> weeklyHours = const Value.absent(),
+                Value<double> weeklyTrend = const Value.absent(),
+                Value<int> totalVerses = const Value.absent(),
+                Value<int> dailyAvgVerses = const Value.absent(),
+              }) => UserProfileTableCompanion.insert(
+                id: id,
+                name: name,
+                email: email,
+                avatarUrl: avatarUrl,
+                completedPercentage: completedPercentage,
+                currentJuz: currentJuz,
+                totalJuz: totalJuz,
+                weeklyHours: weeklyHours,
+                weeklyTrend: weeklyTrend,
+                totalVerses: totalVerses,
+                dailyAvgVerses: dailyAvgVerses,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$UserProfileTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UserProfileTableTable,
+      UserProfile,
+      $$UserProfileTableTableFilterComposer,
+      $$UserProfileTableTableOrderingComposer,
+      $$UserProfileTableTableAnnotationComposer,
+      $$UserProfileTableTableCreateCompanionBuilder,
+      $$UserProfileTableTableUpdateCompanionBuilder,
+      (
+        UserProfile,
+        BaseReferences<_$AppDatabase, $UserProfileTableTable, UserProfile>,
+      ),
+      UserProfile,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4673,4 +5655,6 @@ class $AppDatabaseManager {
       $$LocationCacheTableTableTableManager(_db, _db.locationCacheTable);
   $$ApiCacheTableTableTableManager get apiCacheTable =>
       $$ApiCacheTableTableTableManager(_db, _db.apiCacheTable);
+  $$UserProfileTableTableTableManager get userProfileTable =>
+      $$UserProfileTableTableTableManager(_db, _db.userProfileTable);
 }

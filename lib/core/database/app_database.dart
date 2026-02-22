@@ -4,6 +4,7 @@ import '../../features/quran/data/datasources/quran_tables.dart';
 import '../../features/sholat/data/datasources/sholat_tables.dart';
 import 'location_tables.dart';
 import 'api_cache_table.dart';
+import 'user_profile_table.dart';
 
 part 'app_database.g.dart';
 
@@ -16,6 +17,7 @@ part 'app_database.g.dart';
     NotificationSettingsTable,
     LocationCacheTable,
     ApiCacheTable,
+    UserProfileTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -24,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -48,6 +50,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 6) {
         await m.createTable(apiCacheTable);
+      }
+      if (from < 7) {
+        await m.createTable(userProfileTable);
       }
     },
   );

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/error/exception.dart';
 import '../models/city_model.dart';
@@ -37,6 +38,9 @@ class SholatRemoteDataSourceImpl implements SholatRemoteDataSource {
           .map((json) => CityModel.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        return [];
+      }
       throw ServerException('Failed to search cities: $e');
     }
   }

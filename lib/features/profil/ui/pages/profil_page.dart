@@ -1,199 +1,501 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../bloc/profil_bloc.dart';
 import '../../bloc/profil_event.dart';
-import '../../bloc/profil_state.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_typography.dart';
 
-class ProfilPage extends StatelessWidget {
+class ProfilPage extends StatefulWidget {
   const ProfilPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final bgColor = theme.scaffoldBackgroundColor;
+  State<ProfilPage> createState() => _ProfilPageState();
+}
 
-    return BlocProvider(
-      create: (context) => sl<ProfilBloc>()..add(const FetchProfilStats()),
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          title: Text(
-            'Statistik Aplikasi',
-            style: AppTypography.textTheme.headlineMedium?.copyWith(
-              color: AppColors.white,
-              fontWeight: FontWeight.bold,
+class _ProfilPageState extends State<ProfilPage> {
+  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+  Color get _bgColor => Theme.of(context).scaffoldBackgroundColor;
+  Color get _textColor => _isDark ? AppColors.darkText : AppColors.black;
+  Color get _subTextColor =>
+      _isDark ? AppColors.darkTextSecondary : AppColors.grey;
+  Color get _cardBg => _isDark ? AppColors.darkSurface : AppColors.white;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Widget _buildTopProfile() {
+    // Avatar and Email
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        Stack(
+          alignment: Alignment.bottomRight,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary, width: 3),
+              ),
+              child: const CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=11',
+                ),
+                backgroundColor: Colors.transparent,
+              ),
             ),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.menu, color: AppColors.white),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-          backgroundColor: AppColors.primary,
-          elevation: 0,
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.edit, size: 16, color: Colors.black),
+            ),
+          ],
         ),
-        body: SafeArea(
-          child: BlocBuilder<ProfilBloc, ProfilState>(
-            builder: (context, state) {
-              if (state is ProfilLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              } else if (state is ProfilError) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.error_outline,
-                            size: 64, color: AppColors.error),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Gagal Memuat Statistik',
-                          style: AppTypography.textTheme.titleLarge?.copyWith(
-                            color: AppColors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          state.message,
-                          style: AppTypography.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.grey,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<ProfilBloc>().add(const FetchProfilStats());
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                          ),
-                          child: const Text('Coba Lagi'),
-                        ),
-                      ],
+        const SizedBox(height: 16),
+        Text(
+          'Ahmad Zulfikar',
+          style: AppTypography.textTheme.headlineMedium?.copyWith(
+            color: _textColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'ahmad.z@example.com',
+          style: AppTypography.textTheme.bodyMedium?.copyWith(
+            color: _subTextColor,
+          ),
+        ),
+        const SizedBox(height: 32),
+      ],
+    );
+  }
+
+  Widget _buildReadingProgress() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _subTextColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Reading Progress',
+                style: AppTypography.textTheme.titleMedium?.copyWith(
+                  color: _textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Icon(Icons.menu_book, color: AppColors.primary),
+            ],
+          ),
+          const SizedBox(height: 32),
+          Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 140,
+                  height: 140,
+                  child: CircularProgressIndicator(
+                    value: 0.45,
+                    strokeWidth: 12,
+                    backgroundColor: Colors.indigo.shade800,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.primary,
                     ),
                   ),
-                );
-              } else if (state is ProfilLoaded) {
-                final profil = state.profil;
-                return ListView(
-                  padding: const EdgeInsets.all(16.0),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.secondary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Rata-rata Hits / Bulan',
-                            style: AppTypography.textTheme.titleMedium?.copyWith(
-                              color: AppColors.white.withValues(alpha: 0.8),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            profil.avg.toStringAsFixed(0),
-                            style: AppTypography.textTheme.displayMedium?.copyWith(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
                     Text(
-                      'Riwayat Statistik',
-                      style: AppTypography.textTheme.titleLarge?.copyWith(
-                        color: AppColors.black,
+                      '45%',
+                      style: AppTypography.textTheme.headlineLarge?.copyWith(
+                        color: AppColors.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    ...profil.detail.map((detail) {
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 2,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 8,
-                          ),
-                          leading: CircleAvatar(
-                            backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                            child: const Icon(
-                              Icons.analytics,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          title: Text(
-                            '${_getMonthName(detail.bulan)} ${detail.tahun}',
-                            style: AppTypography.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          trailing: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.secondary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '${detail.hits} Hits',
-                              style: AppTypography.textTheme.bodyMedium?.copyWith(
-                                color: AppColors.secondary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
+                    Text(
+                      'Completed',
+                      style: AppTypography.textTheme.bodySmall?.copyWith(
+                        color: _subTextColor,
+                      ),
+                    ),
                   ],
-                );
-              }
-              return const SizedBox();
-            },
+                ),
+              ],
+            ),
           ),
-        ),
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Juz 14 of 30',
+                style: AppTypography.textTheme.bodyMedium?.copyWith(
+                  color: _subTextColor,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  String _getMonthName(int month) {
-    const months = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ];
-    if (month >= 1 && month <= 12) {
-      return months[month - 1];
-    }
-    return '';
+  Widget _buildWeeklyActivity() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _subTextColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Weekly Activity',
+                style: AppTypography.textTheme.titleMedium?.copyWith(
+                  color: _textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.trending_up, color: AppColors.primary, size: 14),
+                    SizedBox(width: 4),
+                    Text(
+                      '+12%',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Total 4.5 hours this week',
+            style: AppTypography.textTheme.bodySmall?.copyWith(
+              color: _subTextColor,
+            ),
+          ),
+          const SizedBox(height: 48),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildDayLabel('MON', false),
+              _buildDayLabel('TUE', false),
+              _buildDayLabel('WED', false),
+              _buildDayLabel('THU', false),
+              _buildDayLabel('FRI', true),
+              _buildDayLabel('SAT', false),
+              _buildDayLabel('SUN', false),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayLabel(String day, bool isHighlighted) {
+    return Text(
+      day,
+      style: TextStyle(
+        color: isHighlighted
+            ? AppColors.primary
+            : _subTextColor.withValues(alpha: 0.5),
+        fontSize: 10,
+        fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
+      ),
+    );
+  }
+
+  Widget _buildStatsRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(Icons.menu_book, 'Total Verses', '135', ''),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildStatCard(
+            Icons.access_time_filled,
+            'Daily Avg',
+            '19',
+            'verses',
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(
+    IconData icon,
+    String title,
+    String value,
+    String unit,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _subTextColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 20),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            title,
+            style: AppTypography.textTheme.bodySmall?.copyWith(
+              color: _subTextColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                value,
+                style: AppTypography.textTheme.headlineMedium?.copyWith(
+                  color: _textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (unit.isNotEmpty) ...[
+                const SizedBox(width: 4),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    unit,
+                    style: AppTypography.textTheme.bodySmall?.copyWith(
+                      color: _subTextColor,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAchievements() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Achievements',
+              style: AppTypography.textTheme.titleLarge?.copyWith(
+                color: _textColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Text(
+              'View All',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 140,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
+            children: [
+              _buildAchievementBadge(
+                Icons.star,
+                'First Juz',
+                'Completed',
+                true,
+                AppColors.primary,
+              ),
+              const SizedBox(width: 16),
+              _buildAchievementBadge(
+                Icons.local_fire_department,
+                '7 Day Streak',
+                'Active',
+                true,
+                Colors.deepOrange,
+              ),
+              const SizedBox(width: 16),
+              _buildAchievementBadge(
+                Icons.lock,
+                'Surah Yasin',
+                'Locked',
+                false,
+                _subTextColor.withValues(alpha: 0.2),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAchievementBadge(
+    IconData icon,
+    String title,
+    String subtitle,
+    bool isUnlocked,
+    Color color,
+  ) {
+    return Container(
+      width: 120,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _subTextColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isUnlocked
+                  ? color.withValues(alpha: 0.15)
+                  : _subTextColor.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: isUnlocked ? color : _subTextColor.withValues(alpha: 0.5),
+              size: 28,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: AppTypography.textTheme.titleSmall?.copyWith(
+              color: isUnlocked
+                  ? _textColor
+                  : _subTextColor.withValues(alpha: 0.5),
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: AppTypography.textTheme.bodySmall?.copyWith(
+              color: _subTextColor,
+              fontSize: 10,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<ProfilBloc>()..add(const FetchProfilStats()),
+      child: Scaffold(
+        backgroundColor: _bgColor,
+        appBar: AppBar(
+          title: Text(
+            'My Profile',
+            style: AppTypography.textTheme.titleLarge?.copyWith(
+              color: _textColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.chevron_left, color: _textColor),
+            onPressed: () {},
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.settings, color: _textColor),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 8.0,
+            ),
+            child: Column(
+              children: [
+                _buildTopProfile(),
+                _buildReadingProgress(),
+                const SizedBox(height: 16),
+                _buildWeeklyActivity(),
+                const SizedBox(height: 16),
+                _buildStatsRow(),
+                const SizedBox(height: 32),
+                _buildAchievements(),
+                const SizedBox(height: 32),
+              ],
+          ),
+        ),
+      ),
+      ),
+    );
   }
 }
