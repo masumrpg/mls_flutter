@@ -36,6 +36,7 @@ class _SholatPageState extends State<SholatPage> {
   DateTime _now = DateTime.now();
   int _testMinutes = 1;
   DateTime? _scheduledTestTime;
+  bool _useAdzanSound = false;
 
   @override
   void initState() {
@@ -133,7 +134,7 @@ class _SholatPageState extends State<SholatPage> {
           const SizedBox(height: 16),
           _buildPrayerList(schedule, nextPrayer?.name),
           const SizedBox(height: 32),
-          _buildTestSection(context),
+          _buildTestSection(),
           const SizedBox(height: 32),
         ],
       ),
@@ -664,7 +665,7 @@ class _SholatPageState extends State<SholatPage> {
     );
   }
 
-  Widget _buildTestSection(BuildContext context) {
+  Widget _buildTestSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
@@ -677,6 +678,56 @@ class _SholatPageState extends State<SholatPage> {
               fontSize: 14,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Sound Selection
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: _subTextColor.withValues(alpha: 0.1)),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _useAdzanSound
+                      ? Icons.notifications_active
+                      : Icons.notifications,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Notification Sound',
+                        style: TextStyle(
+                          color: _textColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        _useAdzanSound ? 'Adzan Mecca' : 'Default Device',
+                        style: TextStyle(color: _subTextColor, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: _useAdzanSound,
+                  onChanged: (val) {
+                    setState(() {
+                      _useAdzanSound = val;
+                    });
+                  },
+                  activeThumbColor: AppColors.primary,
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
@@ -695,6 +746,7 @@ class _SholatPageState extends State<SholatPage> {
                 id: 9991,
                 title: '📌 Test Immediate',
                 body: 'Notification triggered immediately!',
+                sound: _useAdzanSound ? 'adzan_mecca' : null,
               );
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -765,6 +817,7 @@ class _SholatPageState extends State<SholatPage> {
                       body:
                           'Notification triggered after $_testMinutes minutes!',
                       scheduledTime: scheduledTime,
+                      sound: _useAdzanSound ? 'adzan_mecca' : null,
                     );
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(

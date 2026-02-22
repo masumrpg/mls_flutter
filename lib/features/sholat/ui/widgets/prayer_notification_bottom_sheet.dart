@@ -131,7 +131,7 @@ class _PrayerNotificationBottomSheetState
       child: Row(
         children: options.map((minutes) {
           final isSelected = _selectedPreReminder == minutes;
-          final label = minutes == 0 ? 'Off' : '$minutes min';
+          final label = minutes == 0 ? 'On Time' : '$minutes min';
           return Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: InkWell(

@@ -89,10 +89,17 @@ class NotificationService {
 
     final tz.TZDateTime tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
+    final String channelId = sound != null
+        ? 'prayer_channel_$sound'
+        : 'prayer_channel_id';
+    final String channelName = sound != null
+        ? 'Prayer Times ($sound)'
+        : 'Prayer Times';
+
     final NotificationDetails notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
-        'prayer_channel_id',
-        'Prayer Times',
+        channelId,
+        channelName,
         channelDescription: 'Notifications for prayer times',
         importance: Importance.max,
         priority: Priority.high,
@@ -133,10 +140,17 @@ class NotificationService {
     required String body,
     String? sound,
   }) async {
+    final String channelId = sound != null
+        ? 'prayer_channel_$sound'
+        : 'prayer_channel_id';
+    final String channelName = sound != null
+        ? 'Prayer Times ($sound)'
+        : 'Prayer Times';
+
     final NotificationDetails notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
-        'prayer_channel_id',
-        'Prayer Times',
+        channelId,
+        channelName,
         channelDescription: 'Notifications for prayer times',
         importance: Importance.max,
         priority: Priority.high,
