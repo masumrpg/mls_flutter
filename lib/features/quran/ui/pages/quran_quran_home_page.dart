@@ -5,6 +5,7 @@ import '../../bloc/quran_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/quran_utils.dart';
 
 class QuranQuranHomePage extends StatelessWidget {
   const QuranQuranHomePage({super.key});
@@ -136,12 +137,12 @@ class QuranQuranHomePage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                surah.name,
-                                style: AppTypography.textTheme.headlineLarge
-                                    ?.copyWith(
+                                QuranUtils.getArabicSurahName(surah.number),
+                                style: AppTypography.arabicFont.copyWith(
                                   color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
                                 ),
+                                textDirection: TextDirection.rtl,
                               ),
                             ],
                           ),

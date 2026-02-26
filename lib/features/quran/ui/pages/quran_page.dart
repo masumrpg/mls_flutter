@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_error_widget.dart';
+import '../../../../core/utils/quran_utils.dart';
 
 class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
@@ -506,10 +507,10 @@ class _QuranPageState extends State<QuranPage> {
               ),
             ),
             Text(
-              surah.name,
+              QuranUtils.getArabicSurahName(surah.number as int),
               style: AppTypography.arabicFont.copyWith(
                 color: AppColors.primary,
-                fontSize: 22,
+                fontSize: 24,
               ),
               textDirection: TextDirection.rtl,
             ),

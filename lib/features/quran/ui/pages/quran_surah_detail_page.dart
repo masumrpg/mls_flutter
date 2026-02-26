@@ -518,6 +518,16 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
     );
   }
 
+  String _formatAyahNumber(int number) {
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    final arabicNumber = number
+        .toString()
+        .split('')
+        .map((e) => arabicDigits[int.parse(e)])
+        .join('');
+    return '\u06DD$arabicNumber';
+  }
+
   Widget _buildAyahCard(
     BuildContext context,
     String surahName,
@@ -578,7 +588,7 @@ class _QuranSurahDetailPageState extends State<QuranSurahDetailPage> {
             children: [
               // Arabic text
               Text(
-                ayah.arab,
+                '${ayah.arab} ${_formatAyahNumber(ayah.ayahNumber)}',
                 textAlign: TextAlign.right,
                 style: AppTypography.arabicFont.copyWith(
                   color: arabColor,
