@@ -6,6 +6,35 @@ import '../database/app_database.dart';
 
 class LocationService {
   Future<Position?> getCurrentPosition() async {
+    // 1. Desktop Fallback (Jakarta)
+    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+      return _getFallbackPosition();
+    }
+
+    // 2. Check Database Cache
+    try {
+      final db = AppDatabase.instance;
+      final cached = await (db.select(
+        db.locationCacheTable,
+      )..limit(1)).getSingleOrNull();
+
+      if (cached != null) {
+        return Position(
+          longitude: cached.longitude,
+          latitude: cached.latitude,
+          timestamp: cached.updatedAt,
+          accuracy: 0.0,
+          altitude: 0.0,
+          altitudeAccuracy: 0.0,
+          heading: 0.0,
+          headingAccuracy: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0,
+        );
+      }
+    } catch (_) {}
+
+    // 3. Request Current Position (Mobile/Fallback)
     try {
       bool serviceEnabled;
       LocationPermission permission;
