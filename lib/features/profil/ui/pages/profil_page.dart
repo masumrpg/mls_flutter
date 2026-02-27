@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_header.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../bloc/profil_bloc.dart';
 import '../../bloc/profil_event.dart';
@@ -15,7 +17,6 @@ class ProfilPage extends StatefulWidget {
 
 class _ProfilPageState extends State<ProfilPage> {
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
-  Color get _bgColor => Theme.of(context).scaffoldBackgroundColor;
   Color get _textColor => _isDark ? AppColors.darkText : AppColors.black;
   Color get _subTextColor =>
       _isDark ? AppColors.darkTextSecondary : AppColors.grey;
@@ -27,7 +28,6 @@ class _ProfilPageState extends State<ProfilPage> {
   }
 
   Widget _buildTopProfile() {
-    // Avatar and Email
     return Column(
       children: [
         const SizedBox(height: 24),
@@ -450,51 +450,33 @@ class _ProfilPageState extends State<ProfilPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<ProfilBloc>()..add(const FetchProfilStats()),
-      child: Scaffold(
-        backgroundColor: _bgColor,
-        appBar: AppBar(
-          title: Text(
-            'My Profile',
-            style: AppTypography.textTheme.titleLarge?.copyWith(
-              color: _textColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.chevron_left, color: _textColor),
-            onPressed: () {},
-          ),
+      child: AppScaffold(
+        header: AppHeader.classic(
+          title: 'My Profile',
+          onMenuPressed: () => Scaffold.of(context).openDrawer(),
           actions: [
             IconButton(
-              icon: Icon(Icons.settings, color: _textColor),
+              icon: Icon(Icons.settings_outlined, color: _textColor),
               onPressed: () {},
             ),
           ],
         ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-              vertical: 8.0,
-            ),
-            child: Column(
-              children: [
-                _buildTopProfile(),
-                _buildReadingProgress(),
-                const SizedBox(height: 16),
-                _buildWeeklyActivity(),
-                const SizedBox(height: 16),
-                _buildStatsRow(),
-                const SizedBox(height: 32),
-                _buildAchievements(),
-                const SizedBox(height: 32),
-              ],
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+          child: Column(
+            children: [
+              _buildTopProfile(),
+              _buildReadingProgress(),
+              const SizedBox(height: 16),
+              _buildWeeklyActivity(),
+              const SizedBox(height: 16),
+              _buildStatsRow(),
+              const SizedBox(height: 32),
+              _buildAchievements(),
+              const SizedBox(height: 32),
+            ],
           ),
         ),
-      ),
       ),
     );
   }

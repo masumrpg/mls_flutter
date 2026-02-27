@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_header.dart';
 
 class KalenderPage extends StatefulWidget {
   const KalenderPage({super.key});
@@ -18,7 +20,6 @@ class _KalenderPageState extends State<KalenderPage> {
   late HijriCalendar _todayHijri;
 
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
-  Color get _bgColor => Theme.of(context).scaffoldBackgroundColor;
   Color get _textColor => _isDark ? AppColors.darkText : AppColors.black;
   Color get _subTextColor =>
       _isDark ? AppColors.darkTextSecondary : AppColors.grey;
@@ -560,28 +561,18 @@ class _KalenderPageState extends State<KalenderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _bgColor,
-      appBar: AppBar(
-        title: Text(
-          'Islamic Calendar',
-          style: AppTypography.textTheme.titleLarge?.copyWith(
-            color: _textColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+    return AppScaffold(
+      header: AppHeader.classic(
+        title: 'Kalender Hijriah',
+        onMenuPressed: () => Scaffold.of(context).openDrawer(),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: _textColor),
+            icon: Icon(Icons.settings_outlined, color: _textColor),
             onPressed: () {},
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
             children: [
@@ -589,8 +580,7 @@ class _KalenderPageState extends State<KalenderPage> {
               _buildCalendarCard(),
               _buildUpcomingEvents(),
               const SizedBox(height: 32),
-            ],
-          ),
+          ],
         ),
       ),
     );

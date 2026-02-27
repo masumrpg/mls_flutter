@@ -8,6 +8,8 @@ import '../../../../core/theme/app_typography.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_error_widget.dart';
 import '../../../../core/utils/quran_utils.dart';
+import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_header.dart';
 
 class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
@@ -29,29 +31,18 @@ class _QuranPageState extends State<QuranPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final bgColor = theme.scaffoldBackgroundColor;
-    final textColor = isDark ? AppColors.darkText : AppColors.black;
+    final textColor = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkText
+        : AppColors.black;
     final subTextColor = isDark ? AppColors.darkTextSecondary : AppColors.grey;
     final cardBg = isDark ? AppColors.darkSurface : AppColors.white;
 
     return BlocProvider(
       create: (context) => sl<QuranBloc>()..add(FetchSurahs()),
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          backgroundColor: bgColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.menu, color: textColor),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-          title: Text(
-            'Al-Quran',
-            style: AppTypography.textTheme.titleLarge?.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+      child: AppScaffold(
+        header: AppHeader.classic(
+          title: 'Al-Quran',
+          onMenuPressed: () => Scaffold.of(context).openDrawer(),
           actions: [
             Builder(
               builder: (ctx) => IconButton(

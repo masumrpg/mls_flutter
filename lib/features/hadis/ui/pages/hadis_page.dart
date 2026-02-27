@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../routes/route_names.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_header.dart';
 import '../../bloc/hadis_explore_bloc.dart';
 import '../../data/models/hadis_model.dart';
 
@@ -62,16 +64,13 @@ class _HadisPageContentState extends State<_HadisPageContent> {
     final textColor = isDark ? AppColors.darkText : AppColors.black;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.grey;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hadis'),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () => Scaffold.of(context).openDrawer(),
-        ),
+    return AppScaffold(
+      header: AppHeader.classic(
+        title: 'Hadis',
+        onMenuPressed: () => Scaffold.of(context).openDrawer(),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: Icon(Icons.search, color: textColor),
             onPressed: () {
               context.push(RouteNames.hadisSearch);
             },

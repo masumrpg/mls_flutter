@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_header.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../domain/entities/sholat_schedule_entity.dart';
 import '../../domain/repositories/sholat_repository.dart';
@@ -71,25 +73,72 @@ class _SholatPageState extends State<SholatPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<SholatScheduleBloc>()..add(FetchSholatSchedule()),
-      child: Scaffold(
-        backgroundColor: _bgColor,
-        body: BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
-          builder: (context, state) {
-            if (state is SholatScheduleLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is SholatScheduleError) {
-              return ErrorView(
+      child: BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
+        builder: (context, state) {
+          if (state is SholatScheduleLoading) {
+            return AppScaffold(
+              body: const Center(child: CircularProgressIndicator()),
+            );
+          } else if (state is SholatScheduleError) {
+            return AppScaffold(
+              body: ErrorView(
                 message: state.message,
                 onRetry: () {
                   context.read<SholatScheduleBloc>().add(FetchSholatSchedule());
                 },
-              );
-            } else if (state is SholatScheduleLoaded) {
-              return _buildBody(context, state.schedule);
-            }
-            return const SizedBox();
-          },
-        ),
+              ),
+            );
+          } else if (state is SholatScheduleLoaded) {
+            return AppScaffold(
+              header: AppHeader.location(
+                onMenuPressed: () => Scaffold.of(context).openDrawer(),
+                locationWidget: _buildLocationInfo(state.schedule),
+              ),
+              body: RefreshIndicator(
+                onRefresh: () async {
+                  context.read<SholatScheduleBloc>().add(FetchSholatSchedule());
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDateInfo(),
+                      const SizedBox(height: 16),
+                      _buildHeroCard(
+                        _getNextPrayer(state.schedule),
+                        state.schedule,
+                      ),
+                      const SizedBox(height: 32),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                        child: Text(
+                          "TODAY'S SCHEDULE",
+                          style: TextStyle(
+                            color: _textColor.withValues(alpha: 0.6),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildPrayerList(
+                        state.schedule,
+                        _getNextPrayer(state.schedule)?.name,
+                      ),
+                      const SizedBox(height: 32),
+                      _buildTestSection(),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+          return const SizedBox();
+        },
       ),
     );
   }
@@ -106,123 +155,57 @@ class _SholatPageState extends State<SholatPage> {
     });
   }
 
-  Widget _buildBody(BuildContext context, SholatScheduleEntity schedule) {
-    final nextPrayer = _getNextPrayer(schedule);
-
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 60), // Add top spacing for full screen
-          _buildHeader(schedule),
-          const SizedBox(height: 16),
-          _buildHeroCard(nextPrayer, schedule),
-          const SizedBox(height: 32),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Text(
-              "TODAY'S SCHEDULE",
+  Widget _buildLocationInfo(SholatScheduleEntity schedule) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.location_on, color: AppColors.primary, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              'LOCATION',
               style: TextStyle(
-                color: _textColor.withValues(alpha: 0.6),
-                fontSize: 14,
+                color: AppColors.primary,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          _buildPrayerList(schedule, nextPrayer?.name),
-          const SizedBox(height: 32),
-          _buildTestSection(),
-          const SizedBox(height: 32),
-        ],
-      ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Text(
+              schedule.cityName.isEmpty ? 'Unknown City' : schedule.cityName,
+              style: TextStyle(
+                color: _textColor,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Icon(Icons.keyboard_arrow_down, color: _textColor),
+          ],
+        ),
+      ],
     );
   }
 
-  Widget _buildHeader(SholatScheduleEntity schedule) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              IconButton(
-                padding: EdgeInsets.zero,
-                alignment: Alignment.topLeft,
-                icon: Icon(Icons.menu, color: _textColor, size: 28),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          color: AppColors.primary,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'LOCATION',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Text(
-                          schedule.cityName.isEmpty
-                              ? 'Unknown City'
-                              : schedule.cityName,
-                          style: TextStyle(
-                            color: _textColor,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Icon(Icons.keyboard_arrow_down, color: _textColor),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const CircleAvatar(
-                radius: 20,
-                backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?u=masum',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${HijriCalendar.fromDate(_now).hDay} ${HijriCalendar.fromDate(_now).longMonthName} ${HijriCalendar.fromDate(_now).hYear} H',
-                style: TextStyle(color: _subTextColor, fontSize: 14),
-              ),
-              Text(
-                DateFormat('EEEE, d MMM yyyy').format(_now),
-                style: TextStyle(color: _subTextColor, fontSize: 14),
-              ),
-            ],
-          ),
-        ],
-      ),
+  Widget _buildDateInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '${HijriCalendar.fromDate(_now).hDay} ${HijriCalendar.fromDate(_now).longMonthName} ${HijriCalendar.fromDate(_now).hYear} H',
+          style: TextStyle(color: _subTextColor, fontSize: 14),
+        ),
+        Text(
+          DateFormat('EEEE, d MMM yyyy').format(_now),
+          style: TextStyle(color: _subTextColor, fontSize: 14),
+        ),
+      ],
     );
   }
 
