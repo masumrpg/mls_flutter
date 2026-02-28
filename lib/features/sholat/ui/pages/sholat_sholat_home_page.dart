@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../bloc/sholat_schedule_bloc.dart';
@@ -10,11 +9,7 @@ class SholatSholatHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          sl<SholatScheduleBloc>()..add(const FetchSholatSchedule()),
-      child: const SholatView(),
-    );
+    return const SholatView();
   }
 }
 

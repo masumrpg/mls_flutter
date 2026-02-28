@@ -71,75 +71,72 @@ class _SholatPageState extends State<SholatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<SholatScheduleBloc>()..add(FetchSholatSchedule()),
-      child: BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
-        builder: (context, state) {
-          if (state is SholatScheduleLoading) {
-            return AppScaffold(
-              body: const Center(child: CircularProgressIndicator()),
-            );
-          } else if (state is SholatScheduleError) {
-            return AppScaffold(
-              body: ErrorView(
-                message: state.message,
-                onRetry: () {
-                  context.read<SholatScheduleBloc>().add(FetchSholatSchedule());
-                },
-              ),
-            );
-          } else if (state is SholatScheduleLoaded) {
-            return AppScaffold(
-              header: AppHeader.location(
-                onMenuPressed: () => Scaffold.of(context).openDrawer(),
-                locationWidget: _buildLocationInfo(state.schedule),
-              ),
-              body: RefreshIndicator(
-                onRefresh: () async {
-                  context.read<SholatScheduleBloc>().add(FetchSholatSchedule());
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildDateInfo(),
-                      const SizedBox(height: 16),
-                      _buildHeroCard(
-                        _getNextPrayer(state.schedule),
-                        state.schedule,
-                      ),
-                      const SizedBox(height: 32),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                        child: Text(
-                          "TODAY'S SCHEDULE",
-                          style: TextStyle(
-                            color: _textColor.withValues(alpha: 0.6),
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
+    return BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
+      builder: (context, state) {
+        if (state is SholatScheduleLoading) {
+          return AppScaffold(
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        } else if (state is SholatScheduleError) {
+          return AppScaffold(
+            body: ErrorView(
+              message: state.message,
+              onRetry: () {
+                context.read<SholatScheduleBloc>().add(FetchSholatSchedule());
+              },
+            ),
+          );
+        } else if (state is SholatScheduleLoaded) {
+          return AppScaffold(
+            header: AppHeader.location(
+              onMenuPressed: () => Scaffold.of(context).openDrawer(),
+              locationWidget: _buildLocationInfo(state.schedule),
+            ),
+            body: RefreshIndicator(
+              onRefresh: () async {
+                context.read<SholatScheduleBloc>().add(FetchSholatSchedule());
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDateInfo(),
+                    const SizedBox(height: 16),
+                    _buildHeroCard(
+                      _getNextPrayer(state.schedule),
+                      state.schedule,
+                    ),
+                    const SizedBox(height: 32),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                      child: Text(
+                        "TODAY'S SCHEDULE",
+                        style: TextStyle(
+                          color: _textColor.withValues(alpha: 0.6),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      _buildPrayerList(
-                        state.schedule,
-                        _getNextPrayer(state.schedule)?.name,
-                      ),
-                      const SizedBox(height: 32),
-                      _buildTestSection(),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildPrayerList(
+                      state.schedule,
+                      _getNextPrayer(state.schedule)?.name,
+                    ),
+                    const SizedBox(height: 32),
+                    _buildTestSection(),
+                    const SizedBox(height: 32),
+                  ],
                 ),
               ),
-            );
-          }
-          return const SizedBox();
-        },
-      ),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 
@@ -233,7 +230,6 @@ class _SholatPageState extends State<SholatPage> {
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
       height: 320,
       decoration: BoxDecoration(
         color: _bgColor,
@@ -406,25 +402,20 @@ class _SholatPageState extends State<SholatPage> {
       {'name': 'Isya', 'time': schedule.isya, 'icon': Icons.dark_mode},
     ];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: prayers.map((p) {
-          final isNext = p['name'] == nextPrayerName;
-          final time = p['time'] as String;
-          final name = p['name'] as String;
-          final icon = p['icon'] as IconData;
+    return Column(
+      children: prayers.map((p) {
+        final isNext = p['name'] == nextPrayerName;
+        final time = p['time'] as String;
+        final name = p['name'] as String;
+        final icon = p['icon'] as IconData;
 
-          // Determine status
-          final format = DateFormat('HH:mm');
-          final nowTimeStr = DateFormat('HH:mm').format(_now);
-          final isPassed = format
-              .parse(time)
-              .isBefore(format.parse(nowTimeStr));
+        // Determine status
+        final format = DateFormat('HH:mm');
+        final nowTimeStr = DateFormat('HH:mm').format(_now);
+        final isPassed = format.parse(time).isBefore(format.parse(nowTimeStr));
 
-          return _buildPrayerCard(name, time, icon, isNext, isPassed);
-        }).toList(),
-      ),
+        return _buildPrayerCard(name, time, icon, isNext, isPassed);
+      }).toList(),
     );
   }
 
@@ -649,206 +640,200 @@ class _SholatPageState extends State<SholatPage> {
   }
 
   Widget _buildTestSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'TEST',
-            style: TextStyle(
-              color: _textColor.withValues(alpha: 0.6),
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'TEST',
+          style: TextStyle(
+            color: _textColor.withValues(alpha: 0.6),
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Sound Selection
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: _cardBg,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: _subTextColor.withValues(alpha: 0.1)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                _useAdzanSound
+                    ? Icons.notifications_active
+                    : Icons.notifications,
+                color: AppColors.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Notification Sound',
+                      style: TextStyle(
+                        color: _textColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                    Text(
+                      _useAdzanSound ? 'Adzan Mecca' : 'Default Device',
+                      style: TextStyle(color: _subTextColor, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              Switch(
+                value: _useAdzanSound,
+                onChanged: (val) {
+                  setState(() {
+                    _useAdzanSound = val;
+                  });
+                },
+                activeThumbColor: AppColors.primary,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.white,
+            minimumSize: const Size(double.infinity, 48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
-          const SizedBox(height: 16),
-          // Sound Selection
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: _cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _subTextColor.withValues(alpha: 0.1)),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  _useAdzanSound
-                      ? Icons.notifications_active
-                      : Icons.notifications,
-                  color: AppColors.primary,
-                  size: 20,
+          onPressed: () async {
+            await NotificationService.instance.requestPermission();
+            NotificationService.instance.showNotification(
+              id: 9991,
+              title: '📌 Test Immediate',
+              body: 'Notification triggered immediately!',
+              sound: _useAdzanSound ? 'adzan_mecca' : null,
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Immediate notification triggered'),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Notification Sound',
-                        style: TextStyle(
-                          color: _textColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        _useAdzanSound ? 'Adzan Mecca' : 'Default Device',
-                        style: TextStyle(color: _subTextColor, fontSize: 11),
-                      ),
-                    ],
+              );
+            }
+          },
+          child: const Text('Trigger Immediate Notification'),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                initialValue: '1',
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: _textColor),
+                decoration: InputDecoration(
+                  labelText: 'Minutes delay',
+                  labelStyle: TextStyle(color: _subTextColor),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _subTextColor.withValues(alpha: 0.3),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primary),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                Switch(
-                  value: _useAdzanSound,
-                  onChanged: (val) {
-                    setState(() {
-                      _useAdzanSound = val;
-                    });
-                  },
-                  activeThumbColor: AppColors.primary,
+                onChanged: (val) {
+                  setState(() {
+                    _testMinutes = int.tryParse(val) ?? 1;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.secondary,
+                  foregroundColor: AppColors.white,
+                  minimumSize: const Size(double.infinity, 56),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () async {
+                  await NotificationService.instance.requestPermission();
+                  final scheduledTime = DateTime.now().add(
+                    Duration(minutes: _testMinutes),
+                  );
+                  setState(() {
+                    _scheduledTestTime = scheduledTime;
+                  });
+
+                  NotificationService.instance.schedulePrayerNotification(
+                    id: 9992,
+                    title: '⏰ Test Scheduled',
+                    body: 'Notification triggered after $_testMinutes minutes!',
+                    scheduledTime: scheduledTime,
+                    sound: _useAdzanSound ? 'adzan_mecca' : null,
+                  );
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Notification scheduled for ${DateFormat('HH:mm:ss').format(scheduledTime)}',
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Schedule in $_testMinutes min'),
+              ),
+            ),
+          ],
+        ),
+        if (_scheduledTestTime != null) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.secondary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.secondary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.timer_outlined, color: AppColors.secondary),
+                const SizedBox(width: 8),
+                Text(
+                  'Notification in: ${_scheduledTestTime!.difference(_now).inMinutes.remainder(60).toString().padLeft(2, '0')}:${_scheduledTestTime!.difference(_now).inSeconds.remainder(60).toString().padLeft(2, '0')}',
+                  style: TextStyle(
+                    color: AppColors.secondary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.white,
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: () async {
-              await NotificationService.instance.requestPermission();
-              NotificationService.instance.showNotification(
-                id: 9991,
-                title: '📌 Test Immediate',
-                body: 'Notification triggered immediately!',
-                sound: _useAdzanSound ? 'adzan_mecca' : null,
-              );
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Immediate notification triggered'),
-                  ),
-                );
-              }
-            },
-            child: const Text('Trigger Immediate Notification'),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  initialValue: '1',
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(color: _textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Minutes delay',
-                    labelStyle: TextStyle(color: _subTextColor),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _subTextColor.withValues(alpha: 0.3),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.primary),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onChanged: (val) {
-                    setState(() {
-                      _testMinutes = int.tryParse(val) ?? 1;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                flex: 2,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondary,
-                    foregroundColor: AppColors.white,
-                    minimumSize: const Size(
-                      double.infinity,
-                      56,
-                    ), // Matches default TextField height approximately
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () async {
-                    await NotificationService.instance.requestPermission();
-                    final scheduledTime = DateTime.now().add(
-                      Duration(minutes: _testMinutes),
-                    );
-                    setState(() {
-                      _scheduledTestTime = scheduledTime;
-                    });
-
-                    NotificationService.instance.schedulePrayerNotification(
-                      id: 9992,
-                      title: '⏰ Test Scheduled',
-                      body:
-                          'Notification triggered after $_testMinutes minutes!',
-                      scheduledTime: scheduledTime,
-                      sound: _useAdzanSound ? 'adzan_mecca' : null,
-                    );
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Notification scheduled for ${DateFormat('HH:mm:ss').format(scheduledTime)}',
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  child: Text('Schedule in $_testMinutes min'),
-                ),
-              ),
-            ],
-          ),
-          if (_scheduledTestTime != null) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.secondary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.secondary.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.timer_outlined, color: AppColors.secondary),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Notification in: ${_scheduledTestTime!.difference(_now).inMinutes.remainder(60).toString().padLeft(2, '0')}:${_scheduledTestTime!.difference(_now).inSeconds.remainder(60).toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      color: AppColors.secondary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
+
 }
 
 class _PrayerTime {

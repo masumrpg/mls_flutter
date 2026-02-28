@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/theme_cubit.dart';
 import 'core/di/service_locator.dart';
 import 'core/database/app_database.dart';
+import 'features/sholat/bloc/sholat_schedule_bloc.dart';
 import 'features/quran/cubit/bookmark_cubit.dart';
 import 'routes/app_router.dart';
 
@@ -20,6 +21,10 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(
           create: (_) => BookmarkCubit(db: sl<AppDatabase>())..loadBookmarks(),
+        ),
+        BlocProvider(
+          create: (context) =>
+              sl<SholatScheduleBloc>()..add(FetchSholatSchedule()),
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(

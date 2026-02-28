@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../routes/route_names.dart';
-import '../../../../core/di/service_locator.dart';
 import '../../../sholat/bloc/sholat_schedule_bloc.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_header.dart';
@@ -63,40 +62,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<SholatScheduleBloc>()..add(FetchSholatSchedule()),
-      child: AppScaffold(
-        header: AppHeader.greetings(
-          name: "Ma'sum",
-          greeting: _getGreetingTitle(),
-        ),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
-                builder: (context, state) {
-                  if (state is SholatScheduleLoaded) {
-                    return StatusCard(
-                      schedule: state.schedule,
-                      now: _now,
-                      onQiblaTap: () => context.pushNamed(RouteNames.qibla),
-                    );
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
-              const SizedBox(height: 16),
-              DateCards(now: _now, cardBg: _cardBg, textColor: _textColor),
-              const SizedBox(height: 32),
-              MenuSection(textColor: _textColor, cardBg: _cardBg),
-              const SizedBox(height: 32),
-              QuoteSection(textColor: _textColor),
-              const SizedBox(height: 32),
-            ],
-          ),
+    return AppScaffold(
+      header: AppHeader.greetings(
+        name: "Ma'sum",
+        greeting: _getGreetingTitle(),
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 24),
+            BlocBuilder<SholatScheduleBloc, SholatScheduleState>(
+              builder: (context, state) {
+                return StatusCard(
+                  schedule: state is SholatScheduleLoaded
+                      ? state.schedule
+                      : null,
+                  now: _now,
+                  onQiblaTap: () => context.pushNamed(RouteNames.qibla),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            DateCards(now: _now, cardBg: _cardBg, textColor: _textColor),
+            const SizedBox(height: 32),
+            MenuSection(textColor: _textColor, cardBg: _cardBg),
+            const SizedBox(height: 32),
+            QuoteSection(textColor: _textColor),
+            const SizedBox(height: 32),
+          ],
         ),
       ),
     );

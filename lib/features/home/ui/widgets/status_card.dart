@@ -5,7 +5,7 @@ import '../../../sholat/domain/entities/sholat_schedule_entity.dart';
 import 'prayer_time.dart';
 
 class StatusCard extends StatelessWidget {
-  final SholatScheduleEntity schedule;
+  final SholatScheduleEntity? schedule;
   final DateTime now;
   final VoidCallback onQiblaTap;
 
@@ -21,25 +21,29 @@ class StatusCard extends StatelessWidget {
     final format = DateFormat('HH:mm');
     final nowTimeStr = format.format(now);
 
-    final prayers = [
-      PrayerTime('Imsak', schedule.imsak, now),
-      PrayerTime('Subuh', schedule.subuh, now),
-      PrayerTime('Dhuha', schedule.dhuha, now),
-      PrayerTime('Dzuhur', schedule.dzuhur, now),
-      PrayerTime('Ashar', schedule.ashar, now),
-      PrayerTime('Maghrib', schedule.maghrib, now),
-      PrayerTime('Isya', schedule.isya, now),
-    ];
-
     PrayerTime? nextPrayer;
-    for (var p in prayers) {
-      if (format.parse(p.timeString).isAfter(format.parse(nowTimeStr))) {
-        nextPrayer = p;
-        break;
+    if (schedule != null) {
+      final prayers = [
+        PrayerTime('Imsak', schedule!.imsak, now),
+        PrayerTime('Subuh', schedule!.subuh, now),
+        PrayerTime('Dhuha', schedule!.dhuha, now),
+        PrayerTime('Dzuhur', schedule!.dzuhur, now),
+        PrayerTime('Ashar', schedule!.ashar, now),
+        PrayerTime('Maghrib', schedule!.maghrib, now),
+        PrayerTime('Isya', schedule!.isya, now),
+      ];
+
+      for (var p in prayers) {
+        if (format.parse(p.timeString).isAfter(format.parse(nowTimeStr))) {
+          nextPrayer = p;
+          break;
+        }
       }
     }
 
-    String countdownText = 'Waiting tomorrow';
+    String countdownText = schedule == null
+        ? 'Memuat jadwal...'
+        : 'Waiting tomorrow';
     if (nextPrayer != null) {
       final remaining = nextPrayer.time.difference(now);
       final hours = remaining.inHours;
@@ -74,7 +78,11 @@ class StatusCard extends StatelessWidget {
                     const Icon(Icons.location_on, color: Colors.orange, size: 14),
                     const SizedBox(width: 4),
                     Text(
-                      schedule.cityName.isNotEmpty ? schedule.cityName : 'Mencari lokasi...',
+                      schedule == null
+                          ? 'Mencari lokasi...'
+                          : schedule!.cityName.isNotEmpty
+                          ? schedule!.cityName
+                          : 'Lokasi tidak diketahui',
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],
