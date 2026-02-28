@@ -33,6 +33,7 @@ import '../../features/profil/data/datasources/profil_remote_datasource.dart';
 import '../../features/profil/data/repositories/profil_repository_impl.dart';
 import '../../features/profil/domain/repositories/profil_repository.dart';
 import '../../features/profil/bloc/profil_bloc.dart';
+import '../theme/theme_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -131,4 +132,6 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory<ProfilBloc>(
     () => ProfilBloc(repository: sl()),
   );
+
+  sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit(sl()));
 }

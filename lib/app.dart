@@ -18,7 +18,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => sl<ThemeCubit>()),
         BlocProvider(
           create: (_) => BookmarkCubit(db: sl<AppDatabase>())..loadBookmarks(),
         ),

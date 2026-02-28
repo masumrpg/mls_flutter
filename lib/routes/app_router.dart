@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'route_names.dart';
@@ -19,11 +17,8 @@ import '../features/profil/ui/pages/profil_page.dart';
 import '../features/qibla/ui/pages/qibla_page.dart';
 
 class AppRouter {
-  static final _isDesktop =
-      Platform.isLinux || Platform.isWindows || Platform.isMacOS;
-
   static final router = GoRouter(
-    initialLocation: _isDesktop ? RouteNames.splash : RouteNames.home,
+    initialLocation: RouteNames.splash,
     routes: [
       GoRoute(
         path: RouteNames.splash,
