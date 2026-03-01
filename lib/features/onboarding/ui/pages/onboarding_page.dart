@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../routes/route_names.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_typography.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -54,8 +52,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final td = Theme.of(context);
+    final cs = td.colorScheme;
+    final textTheme = td.textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: cs.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -77,13 +79,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         Icon(
                           _getIcon(_onboardingData[index]['icon']!),
                           size: 120,
-                          color: AppColors.primary,
+                          color: cs.primary,
                         ),
                         const SizedBox(height: 48),
                         Text(
                           _onboardingData[index]['title']!,
-                          style: AppTypography.textTheme.headlineMedium?.copyWith(
-                            color: AppColors.primary,
+                          style: textTheme.headlineMedium?.copyWith(
+                            color: cs.primary,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -91,8 +93,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         const SizedBox(height: 16),
                         Text(
                           _onboardingData[index]['subtitle']!,
-                          style: AppTypography.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.grey,
+                          style: textTheme.bodyLarge?.copyWith(
+                            color: cs.onSurface,
                             height: 1.5,
                           ),
                           textAlign: TextAlign.center,
@@ -115,8 +117,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   width: _currentPage == index ? 24 : 8,
                   decoration: BoxDecoration(
                     color: _currentPage == index
-                        ? AppColors.primary
-                        : AppColors.lightGrey,
+                        ? cs.primary
+                        : cs.onSurface,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -141,8 +143,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
+                    backgroundColor: cs.primary,
+                    foregroundColor: cs.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -151,9 +153,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                   child: Text(
                     _currentPage == _onboardingData.length - 1 ? 'Mulai' : 'Lanjut',
-                    style: AppTypography.textTheme.titleMedium?.copyWith(
+                    style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.white,
+                      color: cs.onPrimary,
                     ),
                   ),
                 ),

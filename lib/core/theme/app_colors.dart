@@ -5,6 +5,9 @@ class AppColors {
   static const primary = Color(0xFF1E3A8A); // Biru Dongker / Dark Blue
   static const secondary = Color(0xFFF59E0B); // Amber / Gold untuk aksen
 
+  // Accent
+  static const onPrimary = Color.fromARGB(255, 23, 48, 117);
+
   // Semantic
   static const error = Color(0xFFDC2626);
   static const success = Color(0xFF16A34A);
@@ -22,5 +25,5 @@ class AppColors {
   static const darkSurface = Color(0xFF1E293B); // Slate 800
   static const darkCard = Color(0xFF334155); // Slate 700
   static const darkText = Color(0xFFF1F5F9); // Slate 100
-  static const darkTextSecondary = Color(0xFF94A3B8); // Slate 400
+  static const darkTextSecondary = Color(0xFF94A3B8);
 }
