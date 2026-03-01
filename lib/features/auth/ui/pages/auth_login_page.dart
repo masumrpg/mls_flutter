@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../routes/route_names.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_typography.dart';
 
 class AuthLoginPage extends StatefulWidget {
   const AuthLoginPage({super.key});
@@ -25,8 +23,12 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final td = Theme.of(context);
+    final cs = td.colorScheme;
+    final textTheme = td.textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: cs.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -38,13 +40,13 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
               Icon(
                 Icons.mosque_rounded,
                 size: 80,
-                color: AppColors.primary,
+                color: cs.primary,
               ),
               const SizedBox(height: 24),
               Text(
                 'Moslem Life Style',
-                style: AppTypography.textTheme.headlineLarge?.copyWith(
-                  color: AppColors.primary,
+                style: textTheme.headlineLarge?.copyWith(
+                  color: cs.primary,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -52,8 +54,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
               const SizedBox(height: 8),
               Text(
                 'Masuk untuk melanjutkan',
-                style: AppTypography.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.grey,
+                style: textTheme.bodyLarge?.copyWith(color: cs.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -62,7 +63,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
               // Email Field
               Text(
                 'Email',
-                style: AppTypography.textTheme.titleSmall?.copyWith(
+                style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -75,18 +76,19 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                   prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.lightGrey),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.lightGrey),
+                    borderSide: BorderSide(
+                      color: cs.onSurface.withValues(alpha: 0.2),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary),
+                    borderSide: BorderSide(color: cs.primary),
                   ),
                   filled: true,
-                  fillColor: AppColors.white,
+                  fillColor: cs.surface,
                 ),
               ),
               const SizedBox(height: 24),
@@ -94,7 +96,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
               // Password Field
               Text(
                 'Password',
-                style: AppTypography.textTheme.titleSmall?.copyWith(
+                style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -107,8 +109,10 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                      color: AppColors.grey,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: cs.onSurface.withValues(alpha: 0.5),
                     ),
                     onPressed: () {
                       setState(() {
@@ -118,18 +122,19 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.lightGrey),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.lightGrey),
+                    borderSide: BorderSide(
+                      color: cs.onSurface.withValues(alpha: 0.2),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary),
+                    borderSide: BorderSide(color: cs.primary),
                   ),
                   filled: true,
-                  fillColor: AppColors.white,
+                  fillColor: cs.surface,
                 ),
               ),
               const SizedBox(height: 16),
@@ -143,8 +148,8 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                   },
                   child: Text(
                     'Lupa Password?',
-                    style: AppTypography.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.primary,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: cs.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -159,8 +164,8 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                   context.go(RouteNames.dashboard);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
+                  backgroundColor: cs.primary,
+                  foregroundColor: cs.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -169,9 +174,9 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                 ),
                 child: Text(
                   'Masuk',
-                  style: AppTypography.textTheme.titleMedium?.copyWith(
+                  style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.white, // Ensure it's explicitly white
+                    color: cs.onPrimary,
                   ),
                 ),
               ),
@@ -183,8 +188,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                 children: [
                   Text(
                     'Belum punya akun? ',
-                    style: AppTypography.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.grey,
+                    style: textTheme.bodyMedium?.copyWith(color: cs.onSurface,
                     ),
                   ),
                   GestureDetector(
@@ -193,8 +197,8 @@ class _AuthLoginPageState extends State<AuthLoginPage> {
                     },
                     child: Text(
                       'Daftar',
-                      style: AppTypography.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.primary,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: cs.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
