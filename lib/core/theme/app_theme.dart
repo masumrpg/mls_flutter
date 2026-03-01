@@ -13,8 +13,8 @@ class AppTheme {
         error: AppColors.error,
         surface: AppColors.white,
         onPrimary: AppColors.white,
-        onSecondary: AppColors.black,
-        onSurface: AppColors.black,
+        onSecondary: AppColors.white,
+        onSurface: AppColors.primary,
         onError: AppColors.white,
       ),
       textTheme: AppTypography.textTheme,
@@ -22,8 +22,8 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
+        backgroundColor: AppColors.white,
+        foregroundColor: AppColors.black,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.white,
